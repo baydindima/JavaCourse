@@ -44,4 +44,35 @@ public class Commit {
                 new ArrayList<>(),
                 new ArrayList<>());
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Commit commit = (Commit) o;
+
+        if (id != commit.id) return false;
+        if (branchId != commit.branchId) return false;
+        return parentId == commit.parentId;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = (int) (id ^ (id >>> 32));
+        result = 31 * result + (int) (branchId ^ (branchId >>> 32));
+        result = 31 * result + (int) (parentId ^ (parentId >>> 32));
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "Commit{" +
+                "id=" + id +
+                ", branchId=" + branchId +
+                ", parentId=" + parentId +
+                ", message='" + message + '\'' +
+                '}';
+    }
 }

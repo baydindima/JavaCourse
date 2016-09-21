@@ -12,25 +12,28 @@ import java.util.stream.Collectors;
  */
 @Getter
 public class Repository {
-    private final Map<java.lang.Long, Branch> branches;
-    private final Map<java.lang.Long, Commit> commits;
+    private final Map<Long, Branch> branches;
 
-    private Commit currentRevision;
+    private transient final Map<Long, Commit> commits;
 
-    private Repository(Map<java.lang.Long, Branch> branches,
-                       Map<java.lang.Long, Commit> commits,
-                       Commit currentRevision) {
+    private long currentRevision;
+
+    private Repository(Map<Long, Branch> branches,
+                       Map<Long, Commit> commits,
+                       long currentRevision) {
         this.branches = branches;
         this.commits = commits;
         this.currentRevision = currentRevision;
     }
 
     public static Repository newRepository(List<Branch> branches,
-                                           List<Commit> aCommits,
-                                           Commit currentRevision) {
+                                           long currentRevision) {
         return new Repository(
-                branches.stream().collect(Collectors.toMap(Branch::getId, branch -> branch)),
-                aCommits.stream().collect(Collectors.toMap(Commit::getId, commit -> commit)),
+                branches.stream()
+                        .collect(Collectors.toMap(Branch::getId, branch -> branch)),
+                branches.stream()
+                        .flatMap(b -> b.getCommits().stream())
+                        .collect(Collectors.toMap(Commit::getId, commit -> commit)),
                 currentRevision
         );
     }
