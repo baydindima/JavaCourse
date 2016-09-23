@@ -23,22 +23,11 @@ public class Branch implements Serializable {
     @Getter
     private boolean isClosed;
 
-    void closeBranch() {
-        isClosed = true;
-    }
-
     private Branch(long id, String name, Long parentId, List<Commit> commits) {
         this.id = id;
         this.name = name;
         this.parentId = parentId;
         this.commits = commits;
-    }
-
-    Commit addCommit(String message, Long parentId) {
-        Commit commit = Commit.newInstance(message, id, parentId);
-
-        commits.add(commit);
-        return commit;
     }
 
     static Branch newInstance(String name, Long parentId) {
@@ -47,6 +36,42 @@ public class Branch implements Serializable {
                 name,
                 parentId,
                 new ArrayList<>());
+    }
+
+    static void isNotEmpty(Branch branch) {
+        if (branch.getCommits().size() == 0) {
+            throw new RuntimeException("Branch is empty!");
+        }
+    }
+
+    static void isNotNull(Branch branch) {
+        if (branch == null) {
+            throw new RuntimeException("Branch isn't exist!");
+        }
+    }
+
+    static void isNotClose(Branch branch) {
+        if (branch.isClosed()) {
+            throw new RuntimeException("Current branch is closed!");
+        }
+    }
+
+    void closeBranch() {
+        isClosed = true;
+    }
+
+    Commit addCommit(String message,
+                     Long parentId,
+                     List<String> addedFiles,
+                     List<String> removedFiles) {
+        Commit commit = Commit.newInstance(message,
+                id,
+                parentId,
+                addedFiles,
+                removedFiles);
+
+        commits.add(commit);
+        return commit;
     }
 
     public List<Commit> getCommits() {
@@ -86,23 +111,5 @@ public class Branch implements Serializable {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 '}';
-    }
-
-    static void isNotEmpty(Branch branch) {
-        if (branch.getCommits().size() == 0) {
-            throw new RuntimeException("Branch is empty!");
-        }
-    }
-
-    static void isNotNull(Branch branch) {
-        if (branch == null) {
-            throw new RuntimeException("Branch isn't exist!");
-        }
-    }
-
-    static void isNotClose(Branch branch) {
-        if (branch.isClosed()) {
-            throw new RuntimeException("Current branch is closed!");
-        }
     }
 }

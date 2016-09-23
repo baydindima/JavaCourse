@@ -2,6 +2,7 @@ package homework2.model;
 
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 import static org.junit.Assert.*;
@@ -47,7 +48,7 @@ public class InMemoryRepositoryTest {
     @Test(expected = RuntimeException.class)
     public void addBranchToClosedBranch() throws Exception {
         InMemoryRepository repository = new InMemoryRepository();
-        repository.addCommit("first commit");
+        repository.addCommit("first commit", new ArrayList<>(), new ArrayList<>());
         repository.closeBranch();
         repository.addBranch("should fail");
     }
@@ -55,7 +56,7 @@ public class InMemoryRepositoryTest {
     @Test
     public void addBranch() throws Exception {
         InMemoryRepository repository = new InMemoryRepository();
-        repository.addCommit("first commit");
+        repository.addCommit("first commit", new ArrayList<>(), new ArrayList<>());
 
         Branch secondBranch = repository.addBranch("second Branch");
 
@@ -68,7 +69,7 @@ public class InMemoryRepositoryTest {
     @Test
     public void addCommit() throws Exception {
         InMemoryRepository repository = new InMemoryRepository();
-        Commit firstCommit = repository.addCommit("first commit");
+        Commit firstCommit = repository.addCommit("first commit", new ArrayList<>(), new ArrayList<>());
 
         assertEquals("should have first commit id as current revision id",
                 repository.getCurrentRevisionId(), (Long) firstCommit.getId());
@@ -78,21 +79,21 @@ public class InMemoryRepositoryTest {
     public void addCommitToClosedBranch() throws Exception {
         InMemoryRepository repository = new InMemoryRepository();
         repository.closeBranch();
-        repository.addCommit("first commit");
+        repository.addCommit("first commit", new ArrayList<>(), new ArrayList<>());
     }
 
     @Test(expected = RuntimeException.class)
     public void changeRevisionToNonExistedRevision() throws Exception {
         InMemoryRepository repository = new InMemoryRepository();
-        repository.addCommit("first commit");
+        repository.addCommit("first commit", new ArrayList<>(), new ArrayList<>());
         repository.changeRevision(-1);
     }
 
     @Test
     public void changeRevisionToCommit() throws Exception {
         InMemoryRepository repository = new InMemoryRepository();
-        Commit firstCommit = repository.addCommit("first commit");
-        repository.addCommit("second commit");
+        Commit firstCommit = repository.addCommit("first commit", new ArrayList<>(), new ArrayList<>());
+        repository.addCommit("second commit", new ArrayList<>(), new ArrayList<>());
 
         repository.changeRevision(firstCommit.getId());
 
@@ -105,10 +106,10 @@ public class InMemoryRepositoryTest {
     @Test
     public void changeRevisionToBranch() throws Exception {
         InMemoryRepository repository = new InMemoryRepository();
-        Commit firstCommit = repository.addCommit("first commit");
+        Commit firstCommit = repository.addCommit("first commit", new ArrayList<>(), new ArrayList<>());
 
         repository.addBranch("second branch");
-        repository.addCommit("second commit");
+        repository.addCommit("second commit", new ArrayList<>(), new ArrayList<>());
 
         repository.changeRevision(firstCommit.getBranchId());
 
@@ -121,12 +122,12 @@ public class InMemoryRepositoryTest {
     @Test
     public void commitAfterChangeRevision() throws Exception {
         InMemoryRepository repository = new InMemoryRepository();
-        Commit firstCommit = repository.addCommit("first commit");
-        repository.addCommit("second commit");
+        Commit firstCommit = repository.addCommit("first commit", new ArrayList<>(), new ArrayList<>());
+        repository.addCommit("second commit", new ArrayList<>(), new ArrayList<>());
 
         repository.changeRevision(firstCommit.getId());
 
-        Commit thirdCommit = repository.addCommit("third commit");
+        Commit thirdCommit = repository.addCommit("third commit", new ArrayList<>(), new ArrayList<>());
 
         assertEquals("should have first commit id as parent commit id",
                 (Long) firstCommit.getId(), thirdCommit.getParentId());
@@ -137,9 +138,9 @@ public class InMemoryRepositoryTest {
     @Test
     public void getBranches() throws Exception {
         InMemoryRepository repository = new InMemoryRepository();
-        repository.addCommit("first commit");
+        repository.addCommit("first commit", new ArrayList<>(), new ArrayList<>());
         Branch secondBranch = repository.addBranch("second branch");
-        repository.addCommit("second commit");
+        repository.addCommit("second commit", new ArrayList<>(), new ArrayList<>());
         Branch thirdBranch = repository.addBranch("third branch");
 
         assertEquals("should have 3 branches", 3, repository.getBranches().size());
@@ -150,7 +151,7 @@ public class InMemoryRepositoryTest {
     @Test
     public void getCommitById() throws Exception {
         InMemoryRepository repository = new InMemoryRepository();
-        Commit commit = repository.addCommit("first commit");
+        Commit commit = repository.addCommit("first commit", new ArrayList<>(), new ArrayList<>());
         Optional<Commit> result = repository.getCommitById(commit.getId());
         assertTrue("should be present", result.isPresent());
         ModelUtils.commitEquals(commit, result.get());
@@ -159,7 +160,7 @@ public class InMemoryRepositoryTest {
     @Test
     public void getCommitByNonExistId() throws Exception {
         InMemoryRepository repository = new InMemoryRepository();
-        repository.addCommit("first commit");
+        repository.addCommit("first commit", new ArrayList<>(), new ArrayList<>());
         Optional<Commit> result = repository.getCommitById(-1);
         assertTrue("should be not present", !result.isPresent());
     }
@@ -167,7 +168,7 @@ public class InMemoryRepositoryTest {
     @Test
     public void getBranchById() throws Exception {
         InMemoryRepository repository = new InMemoryRepository();
-        repository.addCommit("first commit");
+        repository.addCommit("first commit", new ArrayList<>(), new ArrayList<>());
         Optional<Branch> result = repository.getBranchById(repository.getCurrentBranchId());
         assertTrue("should be present", result.isPresent());
     }
@@ -175,7 +176,7 @@ public class InMemoryRepositoryTest {
     @Test
     public void getBranchByNonExistId() throws Exception {
         InMemoryRepository repository = new InMemoryRepository();
-        repository.addCommit("first commit");
+        repository.addCommit("first commit", new ArrayList<>(), new ArrayList<>());
         Optional<Branch> result = repository.getBranchById(-1);
         assertTrue("should be not present", !result.isPresent());
     }

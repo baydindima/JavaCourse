@@ -10,7 +10,7 @@ public interface Repository {
 
     Branch addBranch(String name);
 
-    Commit addCommit(String name);
+    Commit addCommit(String name, List<String> addedFiles, List<String> removedFiles);
 
     List<Branch> getBranches();
 

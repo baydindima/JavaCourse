@@ -13,16 +13,14 @@ public class InMemoryRepository implements Serializable, Repository {
 
     private transient Map<Long, Branch> idToBranch;
     private transient Map<Long, Commit> idToCommit;
+    @Getter
+    private Long currentRevisionId;
+    @Getter
+    private Long currentBranchId;
 
     public InMemoryRepository() {
         addBranch("master").getId();
     }
-
-    @Getter
-    private Long currentRevisionId;
-
-    @Getter
-    private Long currentBranchId;
 
     @Override
     public Branch addBranch(String name) {
@@ -51,12 +49,17 @@ public class InMemoryRepository implements Serializable, Repository {
     }
 
     @Override
-    public Commit addCommit(String name) {
+    public Commit addCommit(String name,
+                            List<String> addedFiles,
+                            List<String> removedFiles) {
         Branch currentBranch = currentBranch();
         Branch.isNotNull(currentBranch);
         Branch.isNotClose(currentBranch);
 
-        Commit commit = currentBranch.addCommit(name, currentRevisionId);
+        Commit commit = currentBranch.addCommit(name,
+                currentRevisionId,
+                addedFiles,
+                removedFiles);
         updateWithNewCommit(commit);
         return commit;
     }

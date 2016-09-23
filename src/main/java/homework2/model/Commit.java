@@ -3,7 +3,6 @@ package homework2.model;
 import lombok.Getter;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -40,14 +39,16 @@ public class Commit implements Serializable {
 
     static Commit newInstance(String message,
                               long branchId,
-                              Long parentId) {
+                              Long parentId,
+                              List<String> addedFiles,
+                              List<String> removedFiles) {
         long commitId = ThreadLocalRandom.current().nextLong(0, Long.MAX_VALUE);
         return new Commit(commitId,
                 branchId,
                 parentId,
                 message,
-                new ArrayList<>(),
-                new ArrayList<>());
+                addedFiles,
+                removedFiles);
     }
 
     public List<String> getFiles() {
