@@ -50,8 +50,8 @@ public class InMemoryRepository implements Serializable, Repository {
 
     @Override
     public Commit addCommit(String name,
-                            List<String> addedFiles,
-                            List<String> removedFiles) {
+                            List<FileInfo> addedFiles,
+                            List<FileInfo> removedFiles) {
         Branch currentBranch = currentBranch();
         Branch.isNotNull(currentBranch);
         Branch.isNotClose(currentBranch);

@@ -62,8 +62,8 @@ public class Branch implements Serializable {
 
     Commit addCommit(String message,
                      Long parentId,
-                     List<String> addedFiles,
-                     List<String> removedFiles) {
+                     List<FileInfo> addedFiles,
+                     List<FileInfo> removedFiles) {
         Commit commit = Commit.newInstance(message,
                 id,
                 parentId,

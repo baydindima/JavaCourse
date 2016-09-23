@@ -20,15 +20,15 @@ public class Commit implements Serializable {
     @Getter
     private final String message;
 
-    private final List<String> files;
-    private final List<String> removedFiles;
+    private final List<FileInfo> files;
+    private final List<FileInfo> removedFiles;
 
     private Commit(long id,
                    long branchId,
                    Long parentId,
                    String message,
-                   List<String> files,
-                   List<String> removedFiles) {
+                   List<FileInfo> files,
+                   List<FileInfo> removedFiles) {
         this.id = id;
         this.branchId = branchId;
         this.parentId = parentId;
@@ -40,8 +40,8 @@ public class Commit implements Serializable {
     static Commit newInstance(String message,
                               long branchId,
                               Long parentId,
-                              List<String> addedFiles,
-                              List<String> removedFiles) {
+                              List<FileInfo> addedFiles,
+                              List<FileInfo> removedFiles) {
         long commitId = ThreadLocalRandom.current().nextLong(0, Long.MAX_VALUE);
         return new Commit(commitId,
                 branchId,
@@ -51,11 +51,11 @@ public class Commit implements Serializable {
                 removedFiles);
     }
 
-    public List<String> getFiles() {
+    public List<FileInfo> getFiles() {
         return Collections.unmodifiableList(files);
     }
 
-    public List<String> getRemovedFiles() {
+    public List<FileInfo> getRemovedFiles() {
         return Collections.unmodifiableList(removedFiles);
     }
 
