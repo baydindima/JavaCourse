@@ -1,5 +1,6 @@
 package homework2.storage;
 
+import homework2.model.InMemoryRepository;
 import homework2.model.Repository;
 
 import java.io.IOException;
@@ -7,7 +8,7 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 
 /**
- * @author Baidin Dima
+ * @author Dmitriy Baidin on 9/21/2016.
  */
 public class RepositoryWriter {
 
