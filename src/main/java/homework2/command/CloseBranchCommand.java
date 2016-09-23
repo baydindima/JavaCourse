@@ -1,7 +1,7 @@
 package homework2.command;
 
 /**
- * Created by John on 9/21/2016.
+ * @author Dmitriy Baidin on 9/23/2016.
  */
 public class CloseBranchCommand {
 }
