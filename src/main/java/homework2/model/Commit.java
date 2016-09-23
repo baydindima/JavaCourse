@@ -2,29 +2,34 @@ package homework2.model;
 
 import lombok.Getter;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * @author Baidin Dima
+ * @author Dmitriy Baidin on 9/21/2016.
  */
-@Getter
-public class Commit {
+public class Commit implements Serializable {
+    @Getter
     private final long id;
+    @Getter
     private final long branchId;
-    private final long parentId;
+    @Getter
+    private final Long parentId;
+    @Getter
     private final String message;
 
     private final List<String> files;
     private final List<String> removedFiles;
 
-    public Commit(long id,
-                  long branchId,
-                  long parentId,
-                  String message,
-                  List<String> files,
-                  List<String> removedFiles) {
+    private Commit(long id,
+                   long branchId,
+                   Long parentId,
+                   String message,
+                   List<String> files,
+                   List<String> removedFiles) {
         this.id = id;
         this.branchId = branchId;
         this.parentId = parentId;
@@ -33,10 +38,10 @@ public class Commit {
         this.removedFiles = removedFiles;
     }
 
-    public static Commit newCommit(String message,
-                                   long branchId,
-                                   long parentId) {
-        long commitId = ThreadLocalRandom.current().nextLong(0, java.lang.Long.MAX_VALUE);
+    static Commit newInstance(String message,
+                              long branchId,
+                              Long parentId) {
+        long commitId = ThreadLocalRandom.current().nextLong(0, Long.MAX_VALUE);
         return new Commit(commitId,
                 branchId,
                 parentId,
@@ -45,33 +50,31 @@ public class Commit {
                 new ArrayList<>());
     }
 
+    public List<String> getFiles() {
+        return Collections.unmodifiableList(files);
+    }
+
+    public List<String> getRemovedFiles() {
+        return Collections.unmodifiableList(removedFiles);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         Commit commit = (Commit) o;
-
-        if (id != commit.id) return false;
-        if (branchId != commit.branchId) return false;
-        return parentId == commit.parentId;
-
+        return id == commit.id;
     }
 
     @Override
     public int hashCode() {
-        int result = (int) (id ^ (id >>> 32));
-        result = 31 * result + (int) (branchId ^ (branchId >>> 32));
-        result = 31 * result + (int) (parentId ^ (parentId >>> 32));
-        return result;
+        return (int) (id ^ (id >>> 32));
     }
 
     @Override
     public String toString() {
         return "Commit{" +
                 "id=" + id +
-                ", branchId=" + branchId +
-                ", parentId=" + parentId +
                 ", message='" + message + '\'' +
                 '}';
     }

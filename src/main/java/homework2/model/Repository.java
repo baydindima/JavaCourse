@@ -1,41 +1,29 @@
 package homework2.model;
 
-
-import lombok.Getter;
-
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 /**
- * @author Baidin Dima
+ * @author Dmitriy Baidin on 9/23/2016.
  */
-@Getter
-public class Repository {
-    private final Map<Long, Branch> branches;
+public interface Repository {
 
-    private transient final Map<Long, Commit> commits;
+    Branch addBranch(String name);
 
-    private long currentRevision;
+    Commit addCommit(String name);
 
-    private Repository(Map<Long, Branch> branches,
-                       Map<Long, Commit> commits,
-                       long currentRevision) {
-        this.branches = branches;
-        this.commits = commits;
-        this.currentRevision = currentRevision;
-    }
+    List<Branch> getBranches();
 
-    public static Repository newRepository(List<Branch> branches,
-                                           long currentRevision) {
-        return new Repository(
-                branches.stream()
-                        .collect(Collectors.toMap(Branch::getId, branch -> branch)),
-                branches.stream()
-                        .flatMap(b -> b.getCommits().stream())
-                        .collect(Collectors.toMap(Commit::getId, commit -> commit)),
-                currentRevision
-        );
-    }
+    void changeRevision(long revisionId);
+
+    Long getCurrentRevisionId();
+
+    Long getCurrentBranchId();
+
+    Optional<Commit> getCommitById(long commitId);
+
+    Optional<Branch> getBranchById(long branchId);
+
+    void closeBranch();
 
 }
