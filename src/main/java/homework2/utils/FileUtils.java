@@ -4,6 +4,7 @@ import homework2.model.Commit;
 import homework2.model.FileInfo;
 
 import java.io.*;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -32,6 +33,26 @@ public class FileUtils {
         if (!file.mkdirs()) {
             throw new RuntimeException("Failed to create dir");
         }
+    }
+
+    public static void copyFilesToCommitDir(Commit commit) {
+        Path commitDirPath = getCommitDirPath(commit);
+        Path currentDirPath = getCurrentDirPath();
+
+        createDirs(commitDirPath.toFile());
+        try {
+            for (FileInfo fileInfo : commit.getFiles()) {
+                Files.copy(Paths.get(currentDirPath.toString(), fileInfo.getPath()),
+                        Paths.get(commitDirPath.toString(), fileInfo.getPath()));
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
+
+    static Path getCommitDirPath(Commit commit) {
+        return Paths.get(getVcsDirPath().toString(), String.valueOf(commit.getId()));
     }
 
     static Path getPathFromCommitAndFileInfo(Commit commit, FileInfo fileInfo) {

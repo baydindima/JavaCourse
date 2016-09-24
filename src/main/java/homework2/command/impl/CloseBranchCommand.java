@@ -9,6 +9,12 @@ import homework2.model.Repository;
 public class CloseBranchCommand implements Command {
     @Override
     public String execute(Repository repository, String[] args) {
-        return null;
+        if (args.length > 0) {
+            throw new RuntimeException("Close branch doesn't take args");
+        }
+
+        repository.closeBranch();
+
+        return "Branch is closed";
     }
 }

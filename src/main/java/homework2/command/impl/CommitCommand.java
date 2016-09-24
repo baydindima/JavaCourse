@@ -57,7 +57,10 @@ public class CommitCommand implements Command {
 
         }
 
-        repository.addCommit(message, changedFiles, removedFiles);
+        Commit commit = repository.addCommit(message, changedFiles, removedFiles);
+
+        FileUtils.copyFilesToCommitDir(commit);
+
         return "Commit added";
     }
 }
