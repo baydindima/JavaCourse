@@ -8,39 +8,51 @@ import homework2.storage.RepositoryReader;
 import homework2.storage.RepositoryWriter;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
+import static homework2.utils.FileUtils.ADDED_FILES_FILE_NAME;
+import static homework2.utils.FileUtils.REPOSITORY_INFO_NAME;
 
 /**
  * @author Dmitriy Baidin on 9/23/2016.
  */
 public class RepositoryUtils {
-    private static final String REPOSITORY_INFO_NAME = "info";
+    private final FileUtils fileUtils;
 
-    private RepositoryUtils() {
+    public RepositoryUtils(FileUtils fileUtils) {
+        this.fileUtils = fileUtils;
     }
 
-    public static void checkRepositoryInit() {
-        if (!FileUtils.getVcsDirPath().toFile().exists()) {
+    public void checkRepositoryInit() {
+        if (!fileUtils.getVcsDirPath().toFile().exists()) {
             throw new RuntimeException("Repository hasn't been init");
         }
     }
 
-    public static Repository getRepository() throws FileNotFoundException {
-        if (FileUtils.getVcsDirPath().toFile().exists()) {
-            return new RepositoryReader()
-                    .read(new FileInputStream(
-                            new File(FileUtils.getVcsDirPath().toString(), REPOSITORY_INFO_NAME))
-                    );
+    public Repository getRepository() {
+        if (fileUtils.getVcsDirPath().toFile().exists()) {
+            try {
+                return new RepositoryReader()
+                        .read(new FileInputStream(
+                                new File(fileUtils.getVcsDirPath().toString(), REPOSITORY_INFO_NAME))
+                        );
+            } catch (FileNotFoundException e) {
+                throw new RuntimeException(e.getMessage());
+            }
         } else {
             return new InMemoryRepository();
         }
     }
 
-    public static void saveRepository(Repository repository) throws IOException {
-        File repositoryFile = new File(FileUtils.getVcsDirPath().toFile(), REPOSITORY_INFO_NAME);
+    public void saveRepository(Repository repository) throws IOException {
+        File repositoryFile = new File(fileUtils.getVcsDirPath().toFile(), REPOSITORY_INFO_NAME);
 
         try (FileOutputStream outputStream = new FileOutputStream(repositoryFile, false)) {
             if (!repositoryFile.exists()) {
@@ -57,7 +69,7 @@ public class RepositoryUtils {
     /**
      * @return collectFiles for current commit
      */
-    public static Map<FileInfo, Commit> collectFiles(Repository repository) {
+    public Map<FileInfo, Commit> collectFiles(Repository repository) {
         return collectFiles(repository, repository.getCurrentRevisionId());
     }
 
@@ -66,7 +78,7 @@ public class RepositoryUtils {
      * @param revisionId id of commit
      * @return list of paths to files in VCS, which from the  commit
      */
-    public static Map<FileInfo, Commit> collectFiles(Repository repository, long revisionId) {
+    public Map<FileInfo, Commit> collectFiles(Repository repository, long revisionId) {
         List<Commit> commits = getCommitPath(repository, revisionId);
 
         return getFilesUnionFromCommits(commits);
@@ -76,7 +88,7 @@ public class RepositoryUtils {
      * @param commitPath path of commits from last commit to root
      * @return map of fileInfo to commit which contains this file
      */
-    private static Map<FileInfo, Commit> getFilesUnionFromCommits(List<Commit> commitPath) {
+    private Map<FileInfo, Commit> getFilesUnionFromCommits(List<Commit> commitPath) {
         Map<FileInfo, Commit> fileInfoCommitMap = new HashMap<>();
         for (int i = commitPath.size() - 1; i >= 0; i--) {
             Commit commit = commitPath.get(i);
@@ -93,7 +105,7 @@ public class RepositoryUtils {
      * @return commits on path from revision commit and first commit,
      * start from revision commit
      */
-    private static List<Commit> getCommitPath(Repository repository, long revisionId) {
+    private List<Commit> getCommitPath(Repository repository, long revisionId) {
         Commit commit = getCommitFromRep(repository, revisionId);
 
         List<Commit> commits = new ArrayList<>();
@@ -111,12 +123,63 @@ public class RepositoryUtils {
      *
      * @return commit or throws RuntimeException
      */
-    private static Commit getCommitFromRep(Repository repository, long revisionId) {
+    private Commit getCommitFromRep(Repository repository, long revisionId) {
         Commit result = repository.getCommitById(revisionId);
         if (result == null) {
             throw new RuntimeException(String.format("No commit with id %d!", revisionId));
         }
         return result;
+    }
+
+    public void copyFilesToCommitDir(Commit commit) {
+        Path commitDirPath = getCommitDirPath(commit);
+        Path currentDirPath = fileUtils.getCurrentDirPath();
+
+        fileUtils.createDirs(commitDirPath.toFile());
+        try {
+            for (FileInfo fileInfo : commit.getFiles()) {
+                Files.copy(Paths.get(currentDirPath.toString(), fileInfo.getPath()),
+                        Paths.get(commitDirPath.toString(), fileInfo.getPath()));
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
+
+    private Path getCommitDirPath(Commit commit) {
+        return Paths.get(fileUtils.getVcsDirPath().toString(), String.valueOf(commit.getId()));
+    }
+
+    public void addToAddedFiles(List<String> files) {
+        File addedFiles = new File(fileUtils.getVcsDirPath().toFile(), ADDED_FILES_FILE_NAME);
+
+        try (FileWriter fileWriter = new FileWriter(addedFiles.getName(), true)) {
+            if (!addedFiles.exists()) {
+                //noinspection ResultOfMethodCallIgnored
+                addedFiles.createNewFile();
+            }
+            BufferedWriter bufferWriter = new BufferedWriter(fileWriter);
+            for (String filePath : files) {
+                bufferWriter.write(filePath + "/n");
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
+    public List<String> getAddedFiles() {
+        File addedFiles = new File(fileUtils.getVcsDirPath().toFile(), ADDED_FILES_FILE_NAME);
+
+        if (!addedFiles.exists()) {
+            return new ArrayList<>();
+        }
+        try (FileReader fileReader = new FileReader(addedFiles.getName())) {
+            BufferedReader bufferReader = new BufferedReader(fileReader);
+            return bufferReader.lines().collect(Collectors.toList());
+        } catch (IOException e) {
+            throw new RuntimeException(e.getMessage());
+        }
     }
 
 }

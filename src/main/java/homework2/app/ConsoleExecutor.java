@@ -2,8 +2,6 @@ package homework2.app;
 
 import homework2.command.Command;
 import homework2.command.CommandFactory;
-import homework2.model.Repository;
-import homework2.utils.RepositoryUtils;
 
 import java.util.Arrays;
 
@@ -17,14 +15,13 @@ public class ConsoleExecutor {
             System.out.println("No command specified");
         } else {
             try {
-                Repository repository = RepositoryUtils.getRepository();
+                Backend backend = new BackendBuilder().build();
                 Command commandByName = CommandFactory.getCommandByName(args[0]);
+                String result = commandByName.execute(backend, Arrays.copyOfRange(args, 1, args.length));
 
-                System.out.println(
-                        commandByName.execute(repository, Arrays.copyOfRange(args, 1, args.length))
-                );
+                System.out.println(result);
 
-                RepositoryUtils.saveRepository(repository);
+                backend.getRepositoryUtils().saveRepository(backend.getRepository());
             } catch (Exception e) {
                 System.out.println(e.getMessage());
             }
