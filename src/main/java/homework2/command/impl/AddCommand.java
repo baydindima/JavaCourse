@@ -1,7 +1,13 @@
 package homework2.command.impl;
 
+import homework2.command.Command;
+
 /**
- * Created by John on 9/21/2016.
+ * @author Dmitriy Baidin on 9/23/2016.
  */
-public class AddCommand {
+public class AddCommand implements Command {
+    @Override
+    public String execute(String[] args) {
+        return null;
+    }
 }

@@ -18,4 +18,8 @@ public class FileUtils {
         return Paths.get("./.vcs/" + String.valueOf(commit.getId()) + fileInfo.getPath());
     }
 
+    public static void addFileToAdded(FileInfo fileInfo) {
+
+    }
+
 }

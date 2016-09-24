@@ -5,6 +5,6 @@ package homework2.command;
  */
 public interface Command {
 
-
+    String execute(String[] args);
 
 }
