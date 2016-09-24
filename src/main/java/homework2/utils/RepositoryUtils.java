@@ -5,7 +5,10 @@ import homework2.model.FileInfo;
 import homework2.model.Repository;
 
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -83,7 +86,6 @@ public class RepositoryUtils {
         return commits;
     }
 
-
     /**
      * Wrapping on repository.getCommitById,
      * which throws Runtime Error if commit didn't find
@@ -91,11 +93,11 @@ public class RepositoryUtils {
      * @return commit or throws RuntimeException
      */
     private static Commit getCommitFromRep(Repository repository, long revisionId) {
-        Optional<Commit> result = repository.getCommitById(revisionId);
-        if (!result.isPresent()) {
+        Commit result = repository.getCommitById(revisionId);
+        if (result == null) {
             throw new RuntimeException(String.format("No commit with id %d!", revisionId));
         }
-        return result.get();
+        return result;
     }
 
 }

@@ -119,13 +119,13 @@ public class InMemoryRepository implements Serializable, Repository {
     }
 
     @Override
-    public Optional<Commit> getCommitById(long commitId) {
-        return Optional.ofNullable(getIdToCommit().get(commitId));
+    public Commit getCommitById(long commitId) {
+        return getIdToCommit().get(commitId);
     }
 
     @Override
-    public Optional<Branch> getBranchById(long branchId) {
-        return Optional.ofNullable(getIdToBranch().get(branchId));
+    public Branch getBranchById(long branchId) {
+        return getIdToBranch().get(branchId);
     }
 
     @Override

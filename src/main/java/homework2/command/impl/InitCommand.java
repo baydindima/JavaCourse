@@ -1,6 +1,7 @@
 package homework2.command.impl;
 
 import homework2.command.Command;
+import homework2.model.Repository;
 import homework2.utils.FileUtils;
 
 import java.io.File;
@@ -10,7 +11,7 @@ import java.io.File;
  */
 public class InitCommand implements Command {
     @Override
-    public String execute(String[] args) {
+    public String execute(Repository repository, String[] args) {
         if (args.length > 0) {
             throw new RuntimeException("Init doesn't take args");
         }
