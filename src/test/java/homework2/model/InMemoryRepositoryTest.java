@@ -3,7 +3,6 @@ package homework2.model;
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.Optional;
 
 import static org.junit.Assert.*;
 
@@ -17,9 +16,8 @@ public class InMemoryRepositoryTest {
 
         repository.closeBranch();
 
-        //noinspection OptionalGetWithoutIsPresent
         assertTrue("should be closed",
-                repository.getBranchById(repository.getCurrentBranchId()).get().isClosed());
+                repository.getBranchById(repository.getCurrentBranchId()).isClosed());
     }
 
     @Test
@@ -152,33 +150,33 @@ public class InMemoryRepositoryTest {
     public void getCommitById() throws Exception {
         InMemoryRepository repository = new InMemoryRepository();
         Commit commit = repository.addCommit("first commit", new ArrayList<>(), new ArrayList<>());
-        Optional<Commit> result = repository.getCommitById(commit.getId());
-        assertTrue("should be present", result.isPresent());
-        ModelUtils.commitEquals(commit, result.get());
+        Commit result = repository.getCommitById(commit.getId());
+        assertNotNull("should be present", result);
+        ModelUtils.commitEquals(commit, result);
     }
 
     @Test
     public void getCommitByNonExistId() throws Exception {
         InMemoryRepository repository = new InMemoryRepository();
         repository.addCommit("first commit", new ArrayList<>(), new ArrayList<>());
-        Optional<Commit> result = repository.getCommitById(-1);
-        assertTrue("should be not present", !result.isPresent());
+        Commit result = repository.getCommitById(-1);
+        assertNull("should be not present", result);
     }
 
     @Test
     public void getBranchById() throws Exception {
         InMemoryRepository repository = new InMemoryRepository();
         repository.addCommit("first commit", new ArrayList<>(), new ArrayList<>());
-        Optional<Branch> result = repository.getBranchById(repository.getCurrentBranchId());
-        assertTrue("should be present", result.isPresent());
+        Branch result = repository.getBranchById(repository.getCurrentBranchId());
+        assertNotNull("should be present", result);
     }
 
     @Test
     public void getBranchByNonExistId() throws Exception {
         InMemoryRepository repository = new InMemoryRepository();
         repository.addCommit("first commit", new ArrayList<>(), new ArrayList<>());
-        Optional<Branch> result = repository.getBranchById(-1);
-        assertTrue("should be not present", !result.isPresent());
+        Branch result = repository.getBranchById(-1);
+        assertNull("should be not present", result);
     }
 
 }
