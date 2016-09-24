@@ -154,15 +154,16 @@ public class RepositoryUtils {
     public void addToAddedFiles(List<String> files) {
         File addedFiles = new File(fileUtils.getVcsDirPath().toFile(), ADDED_FILES_FILE_NAME);
 
-        try (FileWriter fileWriter = new FileWriter(addedFiles.getName(), true)) {
+        try (FileWriter fileWriter = new FileWriter(addedFiles, true)) {
             if (!addedFiles.exists()) {
                 //noinspection ResultOfMethodCallIgnored
                 addedFiles.createNewFile();
             }
             BufferedWriter bufferWriter = new BufferedWriter(fileWriter);
             for (String filePath : files) {
-                bufferWriter.write(filePath + "/n");
+                bufferWriter.write(filePath + "\n");
             }
+            bufferWriter.flush();
         } catch (IOException e) {
             throw new RuntimeException(e.getMessage());
         }
@@ -174,7 +175,8 @@ public class RepositoryUtils {
         if (!addedFiles.exists()) {
             return new ArrayList<>();
         }
-        try (FileReader fileReader = new FileReader(addedFiles.getName())) {
+
+        try (FileReader fileReader = new FileReader(addedFiles)) {
             BufferedReader bufferReader = new BufferedReader(fileReader);
             return bufferReader.lines().collect(Collectors.toList());
         } catch (IOException e) {
