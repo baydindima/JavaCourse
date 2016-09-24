@@ -18,6 +18,8 @@ import java.util.Map;
 public class CommitCommand implements Command {
     @Override
     public String execute(Backend backend, String[] args) {
+        backend.getRepositoryUtils().checkRepositoryInit();
+
         if (args.length == 0) {
             throw new RuntimeException("Commit should contain message");
         }

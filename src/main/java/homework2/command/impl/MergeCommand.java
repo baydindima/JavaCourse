@@ -9,6 +9,7 @@ import homework2.command.Command;
 public class MergeCommand implements Command {
     @Override
     public String execute(Backend backend, String[] args) {
+        backend.getRepositoryUtils().checkRepositoryInit();
         return null;
     }
 }

@@ -10,12 +10,11 @@ import java.util.Arrays;
  */
 public class ConsoleExecutor {
 
-    public void run(String[] args) {
+    public void run(String[] args, Backend backend) {
         if (args.length == 0) {
             System.out.println("No command specified");
         } else {
             try {
-                Backend backend = new BackendBuilder().build();
                 Command commandByName = CommandFactory.getCommandByName(args[0]);
                 String result = commandByName.execute(backend, Arrays.copyOfRange(args, 1, args.length));
 

@@ -9,6 +9,9 @@ import homework2.command.Command;
 public class CloseBranchCommand implements Command {
     @Override
     public String execute(Backend backend, String[] args) {
+        backend.getRepositoryUtils().checkRepositoryInit();
+
+
         if (args.length > 0) {
             throw new RuntimeException("Close branch doesn't take args");
         }

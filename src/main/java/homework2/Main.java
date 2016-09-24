@@ -1,5 +1,7 @@
 package homework2;
 
+import homework2.app.Backend;
+import homework2.app.BackendBuilder;
 import homework2.app.ConsoleExecutor;
 
 /**
@@ -9,7 +11,8 @@ public class Main {
 
     public static void main(String[] args) {
         String[] initCommand = new String[]{"init"};
-        new ConsoleExecutor().run(initCommand);
+        Backend backend = new BackendBuilder().build();
+        new ConsoleExecutor().run(initCommand, backend);
     }
 
 }

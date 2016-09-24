@@ -11,6 +11,7 @@ import homework2.model.Commit;
 public class LogCommand implements Command {
     @Override
     public String execute(Backend backend, String[] args) {
+        backend.getRepositoryUtils().checkRepositoryInit();
         if (args.length > 0) {
             throw new RuntimeException("Log doesn't take args");
         }
