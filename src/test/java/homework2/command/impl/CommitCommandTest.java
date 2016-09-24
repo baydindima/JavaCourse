@@ -25,6 +25,7 @@ public class CommitCommandTest {
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
 
+    @Rule
     public InitRepositoryRule repositoryRule = new InitRepositoryRule();
 
 

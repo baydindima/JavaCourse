@@ -24,7 +24,6 @@ class InitRepositoryRule implements TestRule {
         return new Statement() {
             @Override
             public void evaluate() throws Throwable {
-
                 base.evaluate();
             }
         };
