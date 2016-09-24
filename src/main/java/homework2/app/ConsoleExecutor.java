@@ -22,6 +22,7 @@ public class ConsoleExecutor {
 
                 backend.getRepositoryUtils().saveRepository(backend.getRepository());
             } catch (Exception e) {
+                e.printStackTrace();
                 System.out.println(e.getMessage());
             }
         }

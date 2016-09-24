@@ -8,9 +8,7 @@ import homework2.model.FileInfo;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Dmitriy Baidin on 9/23/2016.
@@ -33,8 +31,8 @@ public class CommitCommand implements Command {
         Map<FileInfo, Commit> fileInfoCommitMap = backend.getRepositoryUtils()
                 .collectFiles(backend.getRepository());
 
-        List<FileInfo> changedFiles = new ArrayList<>();
-        List<FileInfo> removedFiles = new ArrayList<>();
+        Set<FileInfo> changedFiles = new HashSet<>();
+        Set<FileInfo> removedFiles = new HashSet<>();
 
         Path currentDirPath = backend.getFileUtils().getCurrentDirPath();
         for (FileInfo fileInfo : fileInfoCommitMap.keySet()) {
@@ -59,9 +57,13 @@ public class CommitCommand implements Command {
 
         }
 
-        Commit commit = backend.getRepository().addCommit(message, changedFiles, removedFiles);
+        Commit commit = backend.getRepository()
+                .addCommit(message,
+                        new ArrayList<>(changedFiles),
+                        new ArrayList<>(removedFiles));
 
         backend.getRepositoryUtils().copyFilesToCommitDir(commit);
+        backend.getRepositoryUtils().clearAddedFiles();
 
         return "Commit added";
     }

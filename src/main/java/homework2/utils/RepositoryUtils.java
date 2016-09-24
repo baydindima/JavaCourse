@@ -11,14 +11,12 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static homework2.utils.FileUtils.ADDED_FILES_FILE_NAME;
 import static homework2.utils.FileUtils.REPOSITORY_INFO_NAME;
+import static java.nio.file.StandardCopyOption.COPY_ATTRIBUTES;
 
 /**
  * @author Dmitriy Baidin on 9/23/2016.
@@ -36,7 +34,7 @@ public class RepositoryUtils {
         }
     }
 
-    public Repository getRepository() {
+    public Repository loadRepository() {
         if (fileUtils.getVcsDirPath().toFile().exists()) {
             try {
                 return new RepositoryReader()
@@ -44,7 +42,7 @@ public class RepositoryUtils {
                                 new File(fileUtils.getVcsDirPath().toString(), REPOSITORY_INFO_NAME))
                         );
             } catch (FileNotFoundException e) {
-                throw new RuntimeException(e.getMessage());
+                throw new RuntimeException(e.getMessage(), e);
             }
         } else {
             return new InMemoryRepository();
@@ -61,7 +59,7 @@ public class RepositoryUtils {
             }
             new RepositoryWriter().write(repository, outputStream);
         } catch (IOException e) {
-            throw new RuntimeException(e.getMessage());
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 
@@ -70,6 +68,9 @@ public class RepositoryUtils {
      * @return collectFiles for current commit
      */
     public Map<FileInfo, Commit> collectFiles(Repository repository) {
+        if (repository.getCurrentRevisionId() == null) {
+            return Collections.emptyMap();
+        }
         return collectFiles(repository, repository.getCurrentRevisionId());
     }
 
@@ -138,20 +139,23 @@ public class RepositoryUtils {
         fileUtils.createDirs(commitDirPath.toFile());
         try {
             for (FileInfo fileInfo : commit.getFiles()) {
+                Path commitPath = Paths.get(commitDirPath.toString(), fileInfo.getPath());
+                //noinspection ResultOfMethodCallIgnored
+                commitPath.getParent().toFile().mkdirs();
                 Files.copy(Paths.get(currentDirPath.toString(), fileInfo.getPath()),
-                        Paths.get(commitDirPath.toString(), fileInfo.getPath()));
+                        commitPath, COPY_ATTRIBUTES);
             }
         } catch (IOException e) {
-            throw new RuntimeException(e.getMessage());
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 
 
-    private Path getCommitDirPath(Commit commit) {
+    public Path getCommitDirPath(Commit commit) {
         return Paths.get(fileUtils.getVcsDirPath().toString(), String.valueOf(commit.getId()));
     }
 
-    public void addToAddedFiles(List<String> files) {
+    public void setToAddedFiles(List<String> files) {
         File addedFiles = new File(fileUtils.getVcsDirPath().toFile(), ADDED_FILES_FILE_NAME);
 
         try (FileWriter fileWriter = new FileWriter(addedFiles, true)) {
@@ -165,7 +169,7 @@ public class RepositoryUtils {
             }
             bufferWriter.flush();
         } catch (IOException e) {
-            throw new RuntimeException(e.getMessage());
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 
@@ -173,14 +177,22 @@ public class RepositoryUtils {
         File addedFiles = new File(fileUtils.getVcsDirPath().toFile(), ADDED_FILES_FILE_NAME);
 
         if (!addedFiles.exists()) {
-            return new ArrayList<>();
+            return Collections.emptyList();
         }
 
         try (FileReader fileReader = new FileReader(addedFiles)) {
             BufferedReader bufferReader = new BufferedReader(fileReader);
             return bufferReader.lines().collect(Collectors.toList());
         } catch (IOException e) {
-            throw new RuntimeException(e.getMessage());
+            throw new RuntimeException(e.getMessage(), e);
+        }
+    }
+
+    public void clearAddedFiles() {
+        File addedFiles = new File(fileUtils.getVcsDirPath().toFile(), ADDED_FILES_FILE_NAME);
+        if (addedFiles.exists()) {
+            //noinspection ResultOfMethodCallIgnored
+            addedFiles.delete();
         }
     }
 

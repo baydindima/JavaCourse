@@ -19,7 +19,7 @@ public class BackendBuilder {
     public Backend build(File rootDir) {
         FileUtils fileUtils = new FileUtils(rootDir);
         RepositoryUtils repositoryUtils = new RepositoryUtils(fileUtils);
-        Repository repository = repositoryUtils.getRepository();
+        Repository repository = repositoryUtils.loadRepository();
         return new Backend(fileUtils, repositoryUtils, repository);
     }
 

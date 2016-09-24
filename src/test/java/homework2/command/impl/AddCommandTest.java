@@ -21,30 +21,26 @@ public class AddCommandTest {
 
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
+    @Rule
+    public InitRepositoryRule repositoryRule = new InitRepositoryRule();
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
     @Test
     public void execute() throws Exception {
+        repositoryRule.init(folder.getRoot());
 
-        File root = folder.newFolder();
+        new File(folder.getRoot(), "first file").createNewFile();
+        new File(folder.newFolder("folder"), "in").createNewFile();
 
-        Backend initBackend = new BackendBuilder().build(root);
-        new ConsoleExecutor().run(new String[]{"init"}, initBackend);
-
-        new File(root, "first file").createNewFile();
-        File newFolder = new File(root, "folder");
-        newFolder.mkdirs();
-        new File(newFolder, "in").createNewFile();
-
-        Backend addBackend = new BackendBuilder().build(root);
+        Backend backend = new BackendBuilder().build(folder.getRoot());
         new ConsoleExecutor().run(new String[]{"add", "first file", "folder/in"},
-                addBackend);
+                backend);
 
-        List<String> addedFiles = addBackend.getRepositoryUtils().getAddedFiles();
+        List<String> addedFiles = backend.getRepositoryUtils().getAddedFiles();
         assertEquals("should add 2 files", 2, addedFiles.size());
 
         for (String addedFile : addedFiles) {
-            File file = Paths.get(addBackend.getFileUtils().getCurrentDirPath().toString(), addedFile).toFile();
+            File file = Paths.get(backend.getFileUtils().getCurrentDirPath().toString(), addedFile).toFile();
             assertTrue("that file should exist", file.exists());
         }
     }

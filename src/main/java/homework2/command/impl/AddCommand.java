@@ -5,7 +5,7 @@ import homework2.command.Command;
 
 import java.io.File;
 import java.nio.file.Path;
-import java.util.Arrays;
+import java.util.*;
 
 /**
  * @author Dmitriy Baidin on 9/23/2016.
@@ -26,7 +26,12 @@ public class AddCommand implements Command {
             }
         }
 
-        backend.getRepositoryUtils().addToAddedFiles(Arrays.asList(args));
+        List<String> addedFiles = backend.getRepositoryUtils().getAddedFiles();
+
+        Set<String> newFiles = new HashSet<>(addedFiles);
+        newFiles.addAll(Arrays.asList(args));
+
+        backend.getRepositoryUtils().setToAddedFiles(new ArrayList<>(newFiles));
 
         return "Files added";
     }
