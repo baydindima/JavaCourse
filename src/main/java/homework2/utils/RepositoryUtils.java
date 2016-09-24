@@ -16,14 +16,12 @@ public class RepositoryUtils {
     private RepositoryUtils() {
     }
 
-
     /**
      * @return collectFiles for current commit
      */
     public static List<Path> collectFiles(Repository repository) {
         return collectFiles(repository, repository.getCurrentRevisionId());
     }
-
 
     /**
      * @param revisionId id of commit
@@ -77,7 +75,6 @@ public class RepositoryUtils {
         return commits;
     }
 
-
     /**
      * Wrapping on repository.getCommitById,
      * which throws Runtime Error if commit didn't find
@@ -92,13 +89,9 @@ public class RepositoryUtils {
         return result.get();
     }
 
-    private static class FileInfoWithCommit {
-        private final FileInfo fileInfo;
-        private final Commit commit;
-
-        public FileInfoWithCommit(FileInfo fileInfo, Commit commit) {
-            this.fileInfo = fileInfo;
-            this.commit = commit;
+    public void checkRepositoryInit() {
+        if (!FileUtils.getVcsDirPath().toFile().exists()) {
+            throw new RuntimeException("Repository hasn't been init");
         }
     }
 
