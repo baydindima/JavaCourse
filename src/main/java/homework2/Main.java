@@ -10,9 +10,8 @@ import homework2.app.ConsoleExecutor;
 public class Main {
 
     public static void main(String[] args) {
-        String[] initCommand = new String[]{"init"};
         Backend backend = new BackendBuilder().build();
-        new ConsoleExecutor().run(initCommand, backend);
+        new ConsoleExecutor().run(args, backend);
     }
 
 }

@@ -37,6 +37,7 @@ public class CheckoutCommandTest {
         addFiles(files);
 
         Backend backend = new BackendBuilder().build(folder.getRoot());
+        List<String> addedFiles = backend.getRepositoryUtils().getAddedFiles();
         new ConsoleExecutor().run(new String[]{"commit", "first commit"}, backend);
 
         ArrayList<String> secondFiles = new ArrayList<>();
@@ -60,13 +61,13 @@ public class CheckoutCommandTest {
             assertTrue("that file shouldn't exist", !file.exists());
         }
 
-        for (String addedFile : removedFiles) {
+        for (String addedFile : addedFiles) {
             File file = Paths.get(
                     backend.getFileUtils()
                             .getCurrentDirPath()
                             .toString(),
                     addedFile).toFile();
-            assertTrue("that file shouldn't exist", !file.exists());
+            assertTrue("that file should exist", file.exists());
         }
     }
 

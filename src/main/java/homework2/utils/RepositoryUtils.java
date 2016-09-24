@@ -106,7 +106,7 @@ public class RepositoryUtils {
      * @return commits on path from revision commit and first commit,
      * start from revision commit
      */
-    private List<Commit> getCommitPath(Repository repository, long revisionId) {
+    public List<Commit> getCommitPath(Repository repository, long revisionId) {
         Commit commit = getCommitFromRep(repository, revisionId);
 
         List<Commit> commits = new ArrayList<>();
