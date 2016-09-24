@@ -11,6 +11,16 @@ public class CreateBranchCommand implements Command {
     public String execute(Backend backend, String[] args) {
         backend.getRepositoryUtils().checkRepositoryInit();
 
-        return null;
+        if (args.length == 0) {
+            throw new RuntimeException("Should contain branch name");
+        }
+
+        if (args.length > 1) {
+            throw new RuntimeException("Should contain only 1 arg");
+        }
+
+        backend.getRepository().addBranch(args[0]);
+
+        return "Branch created";
     }
 }
