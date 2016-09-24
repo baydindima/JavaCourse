@@ -17,7 +17,7 @@ public class FileUtils {
     private FileUtils() {
     }
 
-    private static Path getCurrentDirPath() {
+    public static Path getCurrentDirPath() {
         return Paths.get(".").toAbsolutePath().normalize();
     }
 

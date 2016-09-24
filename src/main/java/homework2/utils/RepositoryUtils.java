@@ -16,12 +16,20 @@ public class RepositoryUtils {
     private RepositoryUtils() {
     }
 
+    public static void checkRepositoryInit() {
+        if (!FileUtils.getVcsDirPath().toFile().exists()) {
+            throw new RuntimeException("Repository hasn't been init");
+        }
+    }
+
+
     /**
      * @return collectFiles for current commit
      */
     public static List<Path> collectFiles(Repository repository) {
         return collectFiles(repository, repository.getCurrentRevisionId());
     }
+
 
     /**
      * @param revisionId id of commit
@@ -75,6 +83,7 @@ public class RepositoryUtils {
         return commits;
     }
 
+
     /**
      * Wrapping on repository.getCommitById,
      * which throws Runtime Error if commit didn't find
@@ -87,12 +96,6 @@ public class RepositoryUtils {
             throw new RuntimeException(String.format("No commit with id %d!", revisionId));
         }
         return result.get();
-    }
-
-    public void checkRepositoryInit() {
-        if (!FileUtils.getVcsDirPath().toFile().exists()) {
-            throw new RuntimeException("Repository hasn't been init");
-        }
     }
 
 }

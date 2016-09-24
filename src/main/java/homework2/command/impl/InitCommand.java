@@ -15,7 +15,7 @@ public class InitCommand implements Command {
             throw new RuntimeException("Init doesn't take args");
         }
 
-        File vcsDir = new File(FileUtils.getVcsDirPath().toString());
+        File vcsDir = FileUtils.getVcsDirPath().toFile();
         if (vcsDir.exists()) {
             throw new RuntimeException("Repository already has been init");
         }
