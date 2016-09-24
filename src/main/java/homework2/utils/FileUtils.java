@@ -1,8 +1,9 @@
 package homework2.utils;
 
 import java.io.File;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.io.IOException;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 
 /**
  * @author Dmitriy Baidin on 9/23/2016.
@@ -28,6 +29,39 @@ public class FileUtils {
     public void createDirs(File file) {
         if (!file.mkdirs()) {
             throw new RuntimeException("Failed to create dir");
+        }
+    }
+
+    /**
+     * Delete all files in directory except vcs directory
+     */
+    public void clearProject() {
+        try {
+            Files.walkFileTree(getCurrentDirPath(), new SimpleFileVisitor<Path>() {
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                    Files.delete(file);
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+                    if (dir.toFile().getName().equals(VSC_DIR_NAME)) {
+                        return FileVisitResult.SKIP_SUBTREE;
+                    }
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+                    if (!dir.equals(getCurrentDirPath())) {
+                        Files.delete(dir);
+                    }
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to clear project", e);
         }
     }
 

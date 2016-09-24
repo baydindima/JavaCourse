@@ -150,6 +150,23 @@ public class RepositoryUtils {
         }
     }
 
+    public void copyFilesFromCommitDirs(Map<FileInfo, Commit> fileInfoCommitMap) {
+        Path currentDirPath = fileUtils.getCurrentDirPath();
+
+        try {
+            for (Map.Entry<FileInfo, Commit> entry : fileInfoCommitMap.entrySet()) {
+                Path commitPath = Paths.get(getCommitDirPath(entry.getValue()).toString(), entry.getKey().getPath());
+                Path filePath = Paths.get(currentDirPath.toString(), entry.getKey().getPath());
+                //noinspection ResultOfMethodCallIgnored
+                filePath.getParent().toFile().mkdirs();
+                Files.copy(commitPath,
+                        filePath, COPY_ATTRIBUTES);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
+    }
+
 
     public Path getCommitDirPath(Commit commit) {
         return Paths.get(fileUtils.getVcsDirPath().toString(), String.valueOf(commit.getId()));
