@@ -8,4 +8,5 @@ import lombok.Data;
 @Data
 public class FileInfo {
     private final String path;
+    private final long lastUpdated;
 }

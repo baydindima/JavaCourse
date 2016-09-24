@@ -5,11 +5,9 @@ import homework2.model.Repository;
 import homework2.utils.FileUtils;
 import homework2.utils.RepositoryUtils;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Arrays;
 
 /**
  * @author Dmitriy Baidin on 9/23/2016.
@@ -30,26 +28,8 @@ public class AddCommand implements Command {
             }
         }
 
-        File addedFiles = new File(FileUtils.getVcsDirPath().toFile(), "added_files");
+        FileUtils.addToAddedFiles(Arrays.asList(args));
 
-        try {
-            if (!addedFiles.exists()) {
-                //noinspection ResultOfMethodCallIgnored
-                addedFiles.createNewFile();
-            }
-
-            FileWriter fileWritter = new FileWriter(addedFiles.getName(), true);
-            BufferedWriter bufferWritter = new BufferedWriter(fileWritter);
-            for (String filePath : args) {
-                bufferWritter.write(filePath + "/n");
-            }
-            bufferWritter.close();
-
-            return "Files added";
-        } catch (IOException e) {
-            throw new RuntimeException(e.getMessage());
-        }
-
-
+        return "Files added";
     }
 }

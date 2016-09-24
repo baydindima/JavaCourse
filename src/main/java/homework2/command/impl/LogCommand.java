@@ -11,6 +11,10 @@ import homework2.model.Repository;
 public class LogCommand implements Command {
     @Override
     public String execute(Repository repository, String[] args) {
+        if (args.length > 0) {
+            throw new RuntimeException("Log doesn't take args");
+        }
+
         Branch branch = repository.getBranchById(repository.getCurrentBranchId());
 
         StringBuilder builder = new StringBuilder("log\n");

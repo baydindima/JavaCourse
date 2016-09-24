@@ -4,12 +4,10 @@ import homework2.model.Commit;
 import homework2.model.FileInfo;
 import homework2.model.Repository;
 
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * @author Dmitriy Baidin on 9/23/2016.
@@ -29,7 +27,7 @@ public class RepositoryUtils {
     /**
      * @return collectFiles for current commit
      */
-    public static List<Path> collectFiles(Repository repository) {
+    public static Map<FileInfo, Commit> collectFiles(Repository repository) {
         return collectFiles(repository, repository.getCurrentRevisionId());
     }
 
@@ -38,19 +36,10 @@ public class RepositoryUtils {
      * @param revisionId id of commit
      * @return list of paths to files in VCS, which from the  commit
      */
-    public static List<Path> collectFiles(Repository repository, long revisionId) {
+    public static Map<FileInfo, Commit> collectFiles(Repository repository, long revisionId) {
         List<Commit> commits = getCommitPath(repository, revisionId);
 
-        Map<FileInfo, Commit> fileInfoCommitMap = getFilesUnionFromCommits(commits);
-
-        return fileInfoCommitMap.entrySet()
-                .stream()
-                .map(entry ->
-                        FileUtils.getPathFromCommitAndFileInfo(
-                                entry.getValue(),
-                                entry.getKey())
-                )
-                .collect(Collectors.toList());
+        return getFilesUnionFromCommits(commits);
     }
 
     /**
