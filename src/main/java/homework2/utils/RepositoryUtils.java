@@ -2,8 +2,12 @@ package homework2.utils;
 
 import homework2.model.Commit;
 import homework2.model.FileInfo;
+import homework2.model.InMemoryRepository;
 import homework2.model.Repository;
+import homework2.storage.RepositoryReader;
+import homework2.storage.RepositoryWriter;
 
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,6 +17,7 @@ import java.util.Map;
  * @author Dmitriy Baidin on 9/23/2016.
  */
 public class RepositoryUtils {
+    private static final String REPOSITORY_INFO_NAME = "info";
 
     private RepositoryUtils() {
     }
@@ -20,6 +25,31 @@ public class RepositoryUtils {
     public static void checkRepositoryInit() {
         if (!FileUtils.getVcsDirPath().toFile().exists()) {
             throw new RuntimeException("Repository hasn't been init");
+        }
+    }
+
+    public static Repository getRepository() throws FileNotFoundException {
+        if (FileUtils.getVcsDirPath().toFile().exists()) {
+            return new RepositoryReader()
+                    .read(new FileInputStream(
+                            new File(FileUtils.getVcsDirPath().toString(), REPOSITORY_INFO_NAME))
+                    );
+        } else {
+            return new InMemoryRepository();
+        }
+    }
+
+    public static void saveRepository(Repository repository) throws IOException {
+        File repositoryFile = new File(FileUtils.getVcsDirPath().toFile(), REPOSITORY_INFO_NAME);
+
+        try (FileOutputStream outputStream = new FileOutputStream(repositoryFile, false)) {
+            if (!repositoryFile.exists()) {
+                //noinspection ResultOfMethodCallIgnored
+                repositoryFile.createNewFile();
+            }
+            new RepositoryWriter().write(repository, outputStream);
+        } catch (IOException e) {
+            throw new RuntimeException(e.getMessage());
         }
     }
 

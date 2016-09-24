@@ -25,6 +25,9 @@ public class CommandFactory {
         commands.put("merge", MergeCommand::new);
     }
 
+    private CommandFactory() {
+    }
+
     public static Command getCommandByName(String name) {
         return commands.getOrDefault(name, FailCommand::new).get();
     }

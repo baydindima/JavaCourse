@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
  */
 public class FileUtils {
     private static final String VSC_DIR_NAME = ".vcs";
+    private static final String ADDED_FILES_FILE_NAME = "added_files";
 
 
     private FileUtils() {
@@ -55,12 +56,8 @@ public class FileUtils {
         return Paths.get(getVcsDirPath().toString(), String.valueOf(commit.getId()));
     }
 
-    static Path getPathFromCommitAndFileInfo(Commit commit, FileInfo fileInfo) {
-        return Paths.get(getVcsDirPath().toString(), String.valueOf(commit.getId()), fileInfo.getPath());
-    }
-
     public static void addToAddedFiles(List<String> files) {
-        File addedFiles = new File(FileUtils.getVcsDirPath().toFile(), "added_files");
+        File addedFiles = new File(FileUtils.getVcsDirPath().toFile(), ADDED_FILES_FILE_NAME);
 
         try (FileWriter fileWriter = new FileWriter(addedFiles.getName(), true)) {
             if (!addedFiles.exists()) {
@@ -77,7 +74,7 @@ public class FileUtils {
     }
 
     public static List<String> getAddedFiels() {
-        File addedFiles = new File(FileUtils.getVcsDirPath().toFile(), "added_files");
+        File addedFiles = new File(FileUtils.getVcsDirPath().toFile(), ADDED_FILES_FILE_NAME);
 
         if (!addedFiles.exists()) {
             return new ArrayList<>();
