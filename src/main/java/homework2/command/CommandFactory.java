@@ -19,7 +19,7 @@ public class CommandFactory {
         commands.put("checkout", CheckoutCommand::new);
         commands.put("close", CloseBranchCommand::new);
         commands.put("commit", CommitCommand::new);
-        commands.put("new", CreateBranchCommand::new);
+        commands.put("branch", CreateBranchCommand::new);
         commands.put("init", InitCommand::new);
         commands.put("log", LogCommand::new);
         commands.put("merge", MergeCommand::new);

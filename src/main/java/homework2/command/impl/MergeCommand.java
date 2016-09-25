@@ -23,13 +23,13 @@ public class MergeCommand implements Command {
         long firstId = Long.valueOf(args[0]);
         Commit firstCommit = backend.getRepository().getCommitById(firstId);
         if (firstCommit == null) {
-            throw new RuntimeException(String.format("No commit with such id%d", firstId));
+            throw new RuntimeException(String.format("No commit with such id %d", firstId));
         }
 
         long secondId = Long.valueOf(args[1]);
         Commit secondCommit = backend.getRepository().getCommitById(secondId);
         if (secondCommit == null) {
-            throw new RuntimeException("No commit with such id" + secondId);
+            throw new RuntimeException(String.format("No commit with such id %d", secondId));
         }
 
         List<Commit> firstPath = backend.getRepositoryUtils()
@@ -51,11 +51,10 @@ public class MergeCommand implements Command {
             lca = firstPath.get(i + 1);
         }
 
-        backend.getFileUtils().clearProject();
-
         Map<FileInfo, Commit> fileInfoCommitMap = backend.getRepositoryUtils()
                 .collectFiles(backend.getRepository(), lca.getId());
 
+        backend.getFileUtils().clearProject();
         backend.getRepositoryUtils().copyFilesFromCommitDirs(fileInfoCommitMap);
 
         return "Merged to lca";

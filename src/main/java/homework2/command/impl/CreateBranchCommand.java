@@ -2,6 +2,7 @@ package homework2.command.impl;
 
 import homework2.app.Backend;
 import homework2.command.Command;
+import homework2.model.Branch;
 
 /**
  * @author Dmitriy Baidin on 9/23/2016.
@@ -19,8 +20,8 @@ public class CreateBranchCommand implements Command {
             throw new RuntimeException("Should contain only 1 arg");
         }
 
-        backend.getRepository().addBranch(args[0]);
+        Branch branch = backend.getRepository().addBranch(args[0]);
 
-        return "Branch created";
+        return "Branch " + branch.getId() + " created";
     }
 }
