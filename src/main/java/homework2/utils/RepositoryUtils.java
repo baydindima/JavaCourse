@@ -89,7 +89,7 @@ public class RepositoryUtils {
      * @param commitPath path of commits from last commit to root
      * @return map of fileInfo to commit which contains this file
      */
-    private Map<FileInfo, Commit> getFilesUnionFromCommits(List<Commit> commitPath) {
+    public Map<FileInfo, Commit> getFilesUnionFromCommits(List<Commit> commitPath) {
         Map<FileInfo, Commit> fileInfoCommitMap = new HashMap<>();
         for (int i = commitPath.size() - 1; i >= 0; i--) {
             Commit commit = commitPath.get(i);
