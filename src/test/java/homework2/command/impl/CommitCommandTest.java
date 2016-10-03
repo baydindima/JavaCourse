@@ -40,19 +40,19 @@ public class CommitCommandTest {
         addFiles(files);
 
         VersionControlSystem versionControlSystem = BackendBuilder.build(folder.getRoot());
-        List<String> addedFiles = versionControlSystem.getUtilsToRemove().getAddedFiles();
+        List<String> addedFiles = versionControlSystem.getAddedFilesManager().getAddedFiles();
 
         new ConsoleExecutor().run(new String[]{"commit", "first commit"},
                 versionControlSystem);
 
         assertEquals("Added files should be empty", 0,
-                versionControlSystem.getUtilsToRemove().getAddedFiles().size());
+                versionControlSystem.getAddedFilesManager().getAddedFiles().size());
 
         Commit commit = versionControlSystem.getRepository().getBranches().get(0).getCommits().get(0);
 
         for (String addedFile : addedFiles) {
             File file = Paths.get(
-                    versionControlSystem.getUtilsToRemove()
+                    versionControlSystem.getCommitPorter()
                             .getCommitDirPath(commit)
                             .toString(),
                     addedFile).toFile();
@@ -80,14 +80,14 @@ public class CommitCommandTest {
 
         addFiles(secondFiles);
 
-        List<String> addedFiles = versionControlSystem.getUtilsToRemove().getAddedFiles();
+        List<String> addedFiles = versionControlSystem.getAddedFilesManager().getAddedFiles();
         new ConsoleExecutor().run(new String[]{"commit", "second commit"}, versionControlSystem);
 
         Commit commit = versionControlSystem.getRepository().getBranches().get(0).getCommits().get(1);
 
         for (String addedFile : addedFiles) {
             File file = Paths.get(
-                    versionControlSystem.getUtilsToRemove()
+                    versionControlSystem.getCommitPorter()
                             .getCommitDirPath(commit)
                             .toString(),
                     addedFile).toFile();

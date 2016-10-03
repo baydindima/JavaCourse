@@ -36,7 +36,7 @@ public class AddCommandTest {
         new ConsoleExecutor().run(new String[]{"add", "first file", "folder/in"},
                 versionControlSystem);
 
-        List<String> addedFiles = versionControlSystem.getUtilsToRemove().getAddedFiles();
+        List<String> addedFiles = versionControlSystem.getAddedFilesManager().getAddedFiles();
         assertEquals("should add 2 files", 2, addedFiles.size());
 
         for (String addedFile : addedFiles) {

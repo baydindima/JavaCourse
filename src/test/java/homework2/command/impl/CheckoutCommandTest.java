@@ -37,7 +37,7 @@ public class CheckoutCommandTest {
         addFiles(files);
 
         VersionControlSystem versionControlSystem = BackendBuilder.build(folder.getRoot());
-        List<String> addedFiles = versionControlSystem.getUtilsToRemove().getAddedFiles();
+        List<String> addedFiles = versionControlSystem.getAddedFilesManager().getAddedFiles();
         new ConsoleExecutor().run(new String[]{"commit", "first commit"}, versionControlSystem);
 
         ArrayList<String> secondFiles = new ArrayList<>();
@@ -45,7 +45,7 @@ public class CheckoutCommandTest {
         secondFiles.add("folder/out");
 
         addFiles(secondFiles);
-        List<String> removedFiles = versionControlSystem.getUtilsToRemove().getAddedFiles();
+        List<String> removedFiles = versionControlSystem.getAddedFilesManager().getAddedFiles();
         new ConsoleExecutor().run(new String[]{"commit", "second commit"}, versionControlSystem);
 
         Commit commit = versionControlSystem.getRepository().getBranches().get(0).getCommits().get(0);

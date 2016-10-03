@@ -21,7 +21,7 @@ public class InitCommandTest {
         VersionControlSystem versionControlSystem = BackendBuilder.build(folder.getRoot());
         new ConsoleExecutor().run(new String[]{"init"}, versionControlSystem);
 
-        versionControlSystem.getUtilsToRemove().checkRepositoryInit();
+        versionControlSystem.getRepositoryLoader().checkRepositoryInit();
     }
 
 }

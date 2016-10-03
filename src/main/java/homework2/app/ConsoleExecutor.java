@@ -20,8 +20,9 @@ public class ConsoleExecutor {
 
                 System.out.println(result);
 
-                versionControlSystem.getUtilsToRemove().saveRepository(versionControlSystem.getRepository());
+                versionControlSystem.getRepositoryLoader().saveRepository(versionControlSystem.getRepository());
             } catch (Exception e) {
+//                e.printStackTrace();
                 System.out.println(e.getMessage());
             }
         }

@@ -4,10 +4,7 @@ import homework2.model.Commit;
 import homework2.model.FileInfo;
 import homework2.model.Repository;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Dmitriy Baidin on 10/3/2016.
@@ -15,6 +12,9 @@ import java.util.Map;
 public class CommitTreeCrawler {
 
     public Map<FileInfo, Commit> collectFiles(Repository repository) {
+        if (repository.getCurrentRevisionId() == null) {
+            return Collections.emptyMap();
+        }
         return collectFiles(repository, repository.getCurrentRevisionId());
     }
 
