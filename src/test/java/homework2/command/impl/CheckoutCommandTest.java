@@ -71,6 +71,48 @@ public class CheckoutCommandTest {
         }
     }
 
+    @Test
+    public void checkoutByBranchName() throws IOException {
+        repositoryRule.init(folder.getRoot());
+
+        ArrayList<String> files = new ArrayList<>();
+        files.add("first");
+        addFiles(files);
+
+        VersionControlSystem versionControlSystem = BackendBuilder.build(folder.getRoot());
+        List<String> addedFiles = versionControlSystem.getAddedFilesManager().getAddedFiles();
+        new ConsoleExecutor().run(new String[]{"commit", "first commit"}, versionControlSystem);
+
+        ArrayList<String> secondFiles = new ArrayList<>();
+        secondFiles.add("second");
+        secondFiles.add("folder/out");
+
+        addFiles(secondFiles);
+        List<String> removedFiles = versionControlSystem.getAddedFilesManager().getAddedFiles();
+        new ConsoleExecutor().run(new String[]{"branch", "second branch"}, versionControlSystem);
+        new ConsoleExecutor().run(new String[]{"commit", "second commit"}, versionControlSystem);
+
+        new ConsoleExecutor().run(new String[]{"checkout", "master"}, versionControlSystem);
+
+        for (String removedFile : removedFiles) {
+            File file = Paths.get(
+                    versionControlSystem.getFileSystem()
+                            .getCurrentDirPath()
+                            .toString(),
+                    removedFile).toFile();
+            assertTrue("that file shouldn't exist", !file.exists());
+        }
+
+        for (String addedFile : addedFiles) {
+            File file = Paths.get(
+                    versionControlSystem.getFileSystem()
+                            .getCurrentDirPath()
+                            .toString(),
+                    addedFile).toFile();
+            assertTrue("that file should exist", file.exists());
+        }
+    }
+
     @SuppressWarnings("ResultOfMethodCallIgnored")
     private void addFiles(List<String> fileNames) throws IOException {
         String[] args = new String[fileNames.size() + 1];

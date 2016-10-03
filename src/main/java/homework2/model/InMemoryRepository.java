@@ -97,10 +97,10 @@ public class InMemoryRepository implements Serializable, Repository {
     @Override
     public void changeRevision(String branchName) {
         Branch branch = getNameToBranch().get(branchName);
-        if (branchName != null) {
+        if (branch != null) {
             changeRevision(branch.getId());
+            return;
         }
-
         throw new RuntimeException("No such branch " + branchName);
     }
 
