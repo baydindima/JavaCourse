@@ -15,6 +15,8 @@ public interface Repository {
 
     void changeRevision(long revisionId);
 
+    void changeRevision(String branchName);
+
     Long getCurrentRevisionId();
 
     Long getCurrentBranchId();

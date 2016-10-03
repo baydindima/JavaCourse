@@ -23,9 +23,12 @@ public class CheckoutCommand implements Command {
             throw new RuntimeException("Checkout takes only one arg");
         }
 
-        long revisionId = Long.valueOf(args[0]);
+        try {
+            versionControlSystem.getRepository().changeRevision(Long.valueOf(args[0]));
+        } catch (NumberFormatException e) {
+            versionControlSystem.getRepository().changeRevision(args[0]);
+        }
 
-        versionControlSystem.getRepository().changeRevision(revisionId);
 
         Map<FileInfo, Commit> fileInfoCommitMap =
                 versionControlSystem.getCommitTreeCrawler().collectFiles(versionControlSystem.getRepository());
@@ -33,6 +36,6 @@ public class CheckoutCommand implements Command {
         versionControlSystem.getFileSystem().clearProject();
         versionControlSystem.getCommitPorter().copyFilesFromCommitDirs(fileInfoCommitMap);
 
-        return String.format("Checkout to %d", revisionId);
+        return String.format("Checkout to %s", args[0]);
     }
 }

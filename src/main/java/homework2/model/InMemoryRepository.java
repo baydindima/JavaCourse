@@ -13,6 +13,8 @@ public class InMemoryRepository implements Serializable, Repository {
 
     private transient Map<Long, Branch> idToBranch;
     private transient Map<Long, Commit> idToCommit;
+    private transient Map<String, Branch> nameToBranch;
+
     @Getter
     private Long currentRevisionId;
     @Getter
@@ -45,6 +47,7 @@ public class InMemoryRepository implements Serializable, Repository {
     private void updateWithNewBranch(Branch branch) {
         branches.add(branch);
         getIdToBranch().put(branch.getId(), branch);
+        getNameToBranch().put(branch.getName(), branch);
         changeRevision(branch.getId());
     }
 
@@ -92,6 +95,16 @@ public class InMemoryRepository implements Serializable, Repository {
     }
 
     @Override
+    public void changeRevision(String branchName) {
+        Branch branch = getNameToBranch().get(branchName);
+        if (branchName != null) {
+            changeRevision(branch.getId());
+        }
+
+        throw new RuntimeException("No such branch " + branchName);
+    }
+
+    @Override
     public List<Branch> getBranches() {
         return Collections.unmodifiableList(branches);
     }
@@ -116,6 +129,16 @@ public class InMemoryRepository implements Serializable, Repository {
             }
         }
         return idToCommit;
+    }
+
+    private Map<String, Branch> getNameToBranch() {
+        if (nameToBranch == null) {
+            nameToBranch = new HashMap<>();
+            for (Branch branch : branches) {
+                nameToBranch.put(branch.getName(), branch);
+            }
+        }
+        return nameToBranch;
     }
 
     @Override
