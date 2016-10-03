@@ -1,6 +1,6 @@
 package homework2.command.impl;
 
-import homework2.app.Backend;
+import homework2.app.VersionControlSystem;
 import homework2.command.Command;
 import homework2.model.Commit;
 import homework2.model.FileInfo;
@@ -15,21 +15,21 @@ import java.util.stream.Collectors;
  */
 public class MergeCommand implements Command {
     @Override
-    public String execute(Backend backend, String[] args) {
-        backend.getRepositoryUtils().checkRepositoryInit();
+    public String execute(VersionControlSystem versionControlSystem, String[] args) {
+        versionControlSystem.getRepositoryLoader().checkRepositoryInit();
 
         if (args.length != 2) {
             throw new RuntimeException("Merge should contain 1 args");
         }
 
-        long firstId = backend.getRepository().getCurrentRevisionId();
-        Commit firstCommit = backend.getRepository().getCommitById(firstId);
+        long firstId = versionControlSystem.getRepository().getCurrentRevisionId();
+        Commit firstCommit = versionControlSystem.getRepository().getCommitById(firstId);
         if (firstCommit == null) {
             throw new RuntimeException(String.format("No commit with such id %d", firstId));
         }
 
         long secondId = Long.valueOf(args[1]);
-        Commit secondCommit = backend.getRepository().getCommitById(secondId);
+        Commit secondCommit = versionControlSystem.getRepository().getCommitById(secondId);
         if (secondCommit == null) {
             throw new RuntimeException(String.format("No commit with such id %d", secondId));
         }
@@ -42,10 +42,10 @@ public class MergeCommand implements Command {
             return "Both of commits placed in one branch";
         }
 
-        List<Commit> firstPath = backend.getRepositoryUtils()
-                .getCommitPath(backend.getRepository(), firstId);
-        List<Commit> secondPath = backend.getRepositoryUtils()
-                .getCommitPath(backend.getRepository(), secondId);
+        List<Commit> firstPath = versionControlSystem.getCommitTreeCrawler()
+                .getCommitPath(versionControlSystem.getRepository(), firstId);
+        List<Commit> secondPath = versionControlSystem.getCommitTreeCrawler()
+                .getCommitPath(versionControlSystem.getRepository(), secondId);
 
         int i = firstPath.size() - 1;
         int j = secondPath.size() - 1;
@@ -61,12 +61,12 @@ public class MergeCommand implements Command {
             lca = firstPath.get(i + 1);
         }
 
-        Map<FileInfo, Commit> commonCommitMap = backend.getRepositoryUtils()
-                .collectFiles(backend.getRepository(), lca.getId());
+        Map<FileInfo, Commit> commonCommitMap = versionControlSystem.getCommitTreeCrawler()
+                .collectFiles(versionControlSystem.getRepository(), lca.getId());
 
-        Map<FileInfo, Commit> firstCommitMap = backend.getRepositoryUtils()
+        Map<FileInfo, Commit> firstCommitMap = versionControlSystem.getCommitTreeCrawler()
                 .getFilesUnionFromCommits(firstPath.subList(0, i));
-        Map<FileInfo, Commit> secondCommitMap = backend.getRepositoryUtils()
+        Map<FileInfo, Commit> secondCommitMap = versionControlSystem.getCommitTreeCrawler()
                 .getFilesUnionFromCommits(secondPath.subList(0, j));
 
         class FileInfoWithCommit {
@@ -112,8 +112,8 @@ public class MergeCommand implements Command {
         });
 
 
-        backend.getFileUtils().clearProject();
-        backend.getRepositoryUtils().copyFilesFromCommitDirs(commonCommitMap);
+        versionControlSystem.getFileSystem().clearProject();
+        versionControlSystem.getCommitPorter().copyFilesFromCommitDirs(commonCommitMap);
 
         return "Merged to lca";
     }

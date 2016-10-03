@@ -1,6 +1,6 @@
 package homework2.command.impl;
 
-import homework2.app.Backend;
+import homework2.app.VersionControlSystem;
 import homework2.command.Command;
 
 import java.io.File;
@@ -10,17 +10,17 @@ import java.io.File;
  */
 public class InitCommand implements Command {
     @Override
-    public String execute(Backend backend, String[] args) {
+    public String execute(VersionControlSystem versionControlSystem, String[] args) {
         if (args.length > 0) {
             throw new RuntimeException("Init doesn't take args");
         }
 
-        File vcsDir = backend.getFileUtils().getVcsDirPath().toFile();
+        File vcsDir = versionControlSystem.getFileSystem().getVcsDirPath().toFile();
         if (vcsDir.exists()) {
             throw new RuntimeException("Repository already has been init");
         }
 
-        backend.getFileUtils().createDirs(vcsDir);
+        versionControlSystem.getFileSystem().createDirs(vcsDir);
         return "Repository has been init";
     }
 }

@@ -1,4 +1,4 @@
-package homework2.utils;
+package homework2.app;
 
 import java.io.File;
 import java.io.IOException;
@@ -8,13 +8,13 @@ import java.nio.file.attribute.BasicFileAttributes;
 /**
  * @author Dmitriy Baidin on 9/23/2016.
  */
-public class FileUtils {
+public class FileSystem {
     static final String ADDED_FILES_FILE_NAME = "added_files";
     static final String REPOSITORY_INFO_NAME = "info";
     private static final String VSC_DIR_NAME = ".vcs";
     private final File curDir;
 
-    public FileUtils(File curDir) {
+    public FileSystem(File curDir) {
         this.curDir = curDir;
     }
 

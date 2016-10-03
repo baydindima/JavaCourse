@@ -1,6 +1,6 @@
 package homework2.command.impl;
 
-import homework2.app.Backend;
+import homework2.app.VersionControlSystem;
 import homework2.command.Command;
 import homework2.model.Commit;
 import homework2.model.FileInfo;
@@ -15,8 +15,8 @@ import java.util.*;
  */
 public class CommitCommand implements Command {
     @Override
-    public String execute(Backend backend, String[] args) {
-        backend.getRepositoryUtils().checkRepositoryInit();
+    public String execute(VersionControlSystem versionControlSystem, String[] args) {
+        versionControlSystem.getRepositoryLoader().checkRepositoryInit();
 
         if (args.length == 0) {
             throw new RuntimeException("Commit should contain message");
@@ -28,13 +28,13 @@ public class CommitCommand implements Command {
 
         String message = args[0];
 
-        Map<FileInfo, Commit> fileInfoCommitMap = backend.getRepositoryUtils()
-                .collectFiles(backend.getRepository());
+        Map<FileInfo, Commit> fileInfoCommitMap = versionControlSystem.getCommitTreeCrawler()
+                .collectFiles(versionControlSystem.getRepository());
 
         Set<FileInfo> changedFiles = new HashSet<>();
         Set<FileInfo> removedFiles = new HashSet<>();
 
-        Path currentDirPath = backend.getFileUtils().getCurrentDirPath();
+        Path currentDirPath = versionControlSystem.getFileSystem().getCurrentDirPath();
         for (FileInfo fileInfo : fileInfoCommitMap.keySet()) {
             File file = new File(currentDirPath.toFile(), fileInfo.getPath());
             if (file.exists()) {
@@ -46,7 +46,7 @@ public class CommitCommand implements Command {
             }
         }
 
-        List<String> addedFiles = backend.getRepositoryUtils().getAddedFiles();
+        List<String> addedFiles = versionControlSystem.getAddedFilesManager().getAddedFiles();
         for (String addedFile : addedFiles) {
             File file = new File(currentDirPath.toFile(), addedFile);
             if (file.exists()) {
@@ -57,13 +57,13 @@ public class CommitCommand implements Command {
 
         }
 
-        Commit commit = backend.getRepository()
+        Commit commit = versionControlSystem.getRepository()
                 .addCommit(message,
                         new ArrayList<>(changedFiles),
                         new ArrayList<>(removedFiles));
 
-        backend.getRepositoryUtils().copyFilesToCommitDir(commit);
-        backend.getRepositoryUtils().clearAddedFiles();
+        versionControlSystem.getCommitPorter().copyFilesToCommitDir(commit);
+        versionControlSystem.getAddedFilesManager().clearAddedFiles();
 
         return "Commit added";
     }

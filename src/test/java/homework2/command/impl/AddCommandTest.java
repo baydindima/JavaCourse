@@ -1,8 +1,8 @@
 package homework2.command.impl;
 
-import homework2.app.Backend;
 import homework2.app.BackendBuilder;
 import homework2.app.ConsoleExecutor;
+import homework2.app.VersionControlSystem;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -32,15 +32,15 @@ public class AddCommandTest {
         new File(folder.getRoot(), "first file").createNewFile();
         new File(folder.newFolder("folder"), "in").createNewFile();
 
-        Backend backend = new BackendBuilder().build(folder.getRoot());
+        VersionControlSystem versionControlSystem = BackendBuilder.build(folder.getRoot());
         new ConsoleExecutor().run(new String[]{"add", "first file", "folder/in"},
-                backend);
+                versionControlSystem);
 
-        List<String> addedFiles = backend.getRepositoryUtils().getAddedFiles();
+        List<String> addedFiles = versionControlSystem.getUtilsToRemove().getAddedFiles();
         assertEquals("should add 2 files", 2, addedFiles.size());
 
         for (String addedFile : addedFiles) {
-            File file = Paths.get(backend.getFileUtils().getCurrentDirPath().toString(), addedFile).toFile();
+            File file = Paths.get(versionControlSystem.getFileSystem().getCurrentDirPath().toString(), addedFile).toFile();
             assertTrue("that file should exist", file.exists());
         }
     }

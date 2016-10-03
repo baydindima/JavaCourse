@@ -1,6 +1,6 @@
 package homework2.command.impl;
 
-import homework2.app.Backend;
+import homework2.app.VersionControlSystem;
 import homework2.command.Command;
 import homework2.model.Commit;
 import homework2.model.FileInfo;
@@ -12,8 +12,8 @@ import java.util.Map;
  */
 public class CheckoutCommand implements Command {
     @Override
-    public String execute(Backend backend, String[] args) {
-        backend.getRepositoryUtils().checkRepositoryInit();
+    public String execute(VersionControlSystem versionControlSystem, String[] args) {
+        versionControlSystem.getRepositoryLoader().checkRepositoryInit();
 
         if (args.length == 0) {
             throw new RuntimeException("Should contain revision id");
@@ -25,13 +25,13 @@ public class CheckoutCommand implements Command {
 
         long revisionId = Long.valueOf(args[0]);
 
-        backend.getRepository().changeRevision(revisionId);
+        versionControlSystem.getRepository().changeRevision(revisionId);
 
         Map<FileInfo, Commit> fileInfoCommitMap =
-                backend.getRepositoryUtils().collectFiles(backend.getRepository());
+                versionControlSystem.getCommitTreeCrawler().collectFiles(versionControlSystem.getRepository());
 
-        backend.getFileUtils().clearProject();
-        backend.getRepositoryUtils().copyFilesFromCommitDirs(fileInfoCommitMap);
+        versionControlSystem.getFileSystem().clearProject();
+        versionControlSystem.getCommitPorter().copyFilesFromCommitDirs(fileInfoCommitMap);
 
         return String.format("Checkout to %d", revisionId);
     }

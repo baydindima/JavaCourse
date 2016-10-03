@@ -1,8 +1,8 @@
 package homework2.command.impl;
 
-import homework2.app.Backend;
 import homework2.app.BackendBuilder;
 import homework2.app.ConsoleExecutor;
+import homework2.app.VersionControlSystem;
 import homework2.model.Commit;
 import org.junit.Rule;
 import org.junit.Test;
@@ -36,25 +36,25 @@ public class CheckoutCommandTest {
         files.add("first");
         addFiles(files);
 
-        Backend backend = new BackendBuilder().build(folder.getRoot());
-        List<String> addedFiles = backend.getRepositoryUtils().getAddedFiles();
-        new ConsoleExecutor().run(new String[]{"commit", "first commit"}, backend);
+        VersionControlSystem versionControlSystem = BackendBuilder.build(folder.getRoot());
+        List<String> addedFiles = versionControlSystem.getUtilsToRemove().getAddedFiles();
+        new ConsoleExecutor().run(new String[]{"commit", "first commit"}, versionControlSystem);
 
         ArrayList<String> secondFiles = new ArrayList<>();
         secondFiles.add("second");
         secondFiles.add("folder/out");
 
         addFiles(secondFiles);
-        List<String> removedFiles = backend.getRepositoryUtils().getAddedFiles();
-        new ConsoleExecutor().run(new String[]{"commit", "second commit"}, backend);
+        List<String> removedFiles = versionControlSystem.getUtilsToRemove().getAddedFiles();
+        new ConsoleExecutor().run(new String[]{"commit", "second commit"}, versionControlSystem);
 
-        Commit commit = backend.getRepository().getBranches().get(0).getCommits().get(0);
+        Commit commit = versionControlSystem.getRepository().getBranches().get(0).getCommits().get(0);
 
-        new ConsoleExecutor().run(new String[]{"checkout", String.valueOf(commit.getId())}, backend);
+        new ConsoleExecutor().run(new String[]{"checkout", String.valueOf(commit.getId())}, versionControlSystem);
 
         for (String removedFile : removedFiles) {
             File file = Paths.get(
-                    backend.getFileUtils()
+                    versionControlSystem.getFileSystem()
                             .getCurrentDirPath()
                             .toString(),
                     removedFile).toFile();
@@ -63,7 +63,7 @@ public class CheckoutCommandTest {
 
         for (String addedFile : addedFiles) {
             File file = Paths.get(
-                    backend.getFileUtils()
+                    versionControlSystem.getFileSystem()
                             .getCurrentDirPath()
                             .toString(),
                     addedFile).toFile();
@@ -84,8 +84,8 @@ public class CheckoutCommandTest {
             args[++i] = fileName;
         }
 
-        Backend backend = new BackendBuilder().build(folder.getRoot());
-        new ConsoleExecutor().run(args, backend);
+        VersionControlSystem versionControlSystem = BackendBuilder.build(folder.getRoot());
+        new ConsoleExecutor().run(args, versionControlSystem);
     }
 
 }

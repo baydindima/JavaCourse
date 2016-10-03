@@ -1,6 +1,6 @@
 package homework2.command.impl;
 
-import homework2.app.Backend;
+import homework2.app.VersionControlSystem;
 import homework2.command.Command;
 
 import java.io.File;
@@ -12,26 +12,26 @@ import java.util.*;
  */
 public class AddCommand implements Command {
     @Override
-    public String execute(Backend backend, String[] args) {
-        backend.getRepositoryUtils().checkRepositoryInit();
+    public String execute(VersionControlSystem versionControlSystem, String[] args) {
+        versionControlSystem.getRepositoryLoader().checkRepositoryInit();
 
         if (args.length == 0) {
             throw new RuntimeException("Nothing to add");
         }
 
-        Path currentDirPath = backend.getFileUtils().getCurrentDirPath();
+        Path currentDirPath = versionControlSystem.getFileSystem().getCurrentDirPath();
         for (String filePath : args) {
             if (!new File(currentDirPath.toString(), filePath).exists()) {
                 throw new RuntimeException(String.format("No such file:%s", filePath));
             }
         }
 
-        List<String> addedFiles = backend.getRepositoryUtils().getAddedFiles();
+        List<String> addedFiles = versionControlSystem.getAddedFilesManager().getAddedFiles();
 
         Set<String> newFiles = new HashSet<>(addedFiles);
         newFiles.addAll(Arrays.asList(args));
 
-        backend.getRepositoryUtils().setToAddedFiles(new ArrayList<>(newFiles));
+        versionControlSystem.getAddedFilesManager().setAddedFiles(new ArrayList<>(newFiles));
 
         return "Files added";
     }

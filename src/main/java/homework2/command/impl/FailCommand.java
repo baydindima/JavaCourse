@@ -1,6 +1,6 @@
 package homework2.command.impl;
 
-import homework2.app.Backend;
+import homework2.app.VersionControlSystem;
 import homework2.command.Command;
 
 /**
@@ -8,7 +8,7 @@ import homework2.command.Command;
  */
 public class FailCommand implements Command {
     @Override
-    public String execute(Backend backend, String[] args) {
+    public String execute(VersionControlSystem versionControlSystem, String[] args) {
         return "No such command!";
     }
 }

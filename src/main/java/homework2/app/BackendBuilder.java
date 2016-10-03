@@ -1,8 +1,6 @@
 package homework2.app;
 
 import homework2.model.Repository;
-import homework2.utils.FileUtils;
-import homework2.utils.RepositoryUtils;
 
 import java.io.File;
 
@@ -12,15 +10,25 @@ import java.io.File;
 public class BackendBuilder {
 
 
-    public Backend build() {
+    public static VersionControlSystem build() {
         return build(new File("."));
     }
 
-    public Backend build(File rootDir) {
-        FileUtils fileUtils = new FileUtils(rootDir);
-        RepositoryUtils repositoryUtils = new RepositoryUtils(fileUtils);
-        Repository repository = repositoryUtils.loadRepository();
-        return new Backend(fileUtils, repositoryUtils, repository);
+    public static VersionControlSystem build(File rootDir) {
+        FileSystem fileSystem = new FileSystem(rootDir);
+        AddedFilesManager addedFilesManager = new AddedFilesManager(fileSystem);
+        CommitPorter commitPorter = new CommitPorter(fileSystem);
+        CommitTreeCrawler commitTreeCrawler = new CommitTreeCrawler();
+        RepositoryLoader repositoryLoader = new RepositoryLoader(fileSystem);
+        Repository repository = repositoryLoader.loadRepository();
+
+        return new VersionControlSystem(
+                addedFilesManager,
+                commitPorter,
+                commitTreeCrawler,
+                fileSystem,
+                repositoryLoader,
+                repository);
     }
 
 

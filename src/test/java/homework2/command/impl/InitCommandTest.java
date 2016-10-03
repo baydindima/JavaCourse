@@ -1,8 +1,8 @@
 package homework2.command.impl;
 
-import homework2.app.Backend;
 import homework2.app.BackendBuilder;
 import homework2.app.ConsoleExecutor;
+import homework2.app.VersionControlSystem;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -18,10 +18,10 @@ public class InitCommandTest {
 
     @Test
     public void execute() throws Exception {
-        Backend backend = new BackendBuilder().build(folder.getRoot());
-        new ConsoleExecutor().run(new String[]{"init"}, backend);
+        VersionControlSystem versionControlSystem = BackendBuilder.build(folder.getRoot());
+        new ConsoleExecutor().run(new String[]{"init"}, versionControlSystem);
 
-        backend.getRepositoryUtils().checkRepositoryInit();
+        versionControlSystem.getUtilsToRemove().checkRepositoryInit();
     }
 
 }

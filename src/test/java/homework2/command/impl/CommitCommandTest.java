@@ -1,8 +1,8 @@
 package homework2.command.impl;
 
-import homework2.app.Backend;
 import homework2.app.BackendBuilder;
 import homework2.app.ConsoleExecutor;
+import homework2.app.VersionControlSystem;
 import homework2.model.Commit;
 import org.junit.Rule;
 import org.junit.Test;
@@ -39,20 +39,20 @@ public class CommitCommandTest {
 
         addFiles(files);
 
-        Backend backend = new BackendBuilder().build(folder.getRoot());
-        List<String> addedFiles = backend.getRepositoryUtils().getAddedFiles();
+        VersionControlSystem versionControlSystem = BackendBuilder.build(folder.getRoot());
+        List<String> addedFiles = versionControlSystem.getUtilsToRemove().getAddedFiles();
 
         new ConsoleExecutor().run(new String[]{"commit", "first commit"},
-                backend);
+                versionControlSystem);
 
         assertEquals("Added files should be empty", 0,
-                backend.getRepositoryUtils().getAddedFiles().size());
+                versionControlSystem.getUtilsToRemove().getAddedFiles().size());
 
-        Commit commit = backend.getRepository().getBranches().get(0).getCommits().get(0);
+        Commit commit = versionControlSystem.getRepository().getBranches().get(0).getCommits().get(0);
 
         for (String addedFile : addedFiles) {
             File file = Paths.get(
-                    backend.getRepositoryUtils()
+                    versionControlSystem.getUtilsToRemove()
                             .getCommitDirPath(commit)
                             .toString(),
                     addedFile).toFile();
@@ -71,8 +71,8 @@ public class CommitCommandTest {
 
         addFiles(files);
 
-        Backend backend = new BackendBuilder().build(folder.getRoot());
-        new ConsoleExecutor().run(new String[]{"commit", "first commit"}, backend);
+        VersionControlSystem versionControlSystem = BackendBuilder.build(folder.getRoot());
+        new ConsoleExecutor().run(new String[]{"commit", "first commit"}, versionControlSystem);
 
         ArrayList<String> secondFiles = new ArrayList<>();
         secondFiles.add("second");
@@ -80,14 +80,14 @@ public class CommitCommandTest {
 
         addFiles(secondFiles);
 
-        List<String> addedFiles = backend.getRepositoryUtils().getAddedFiles();
-        new ConsoleExecutor().run(new String[]{"commit", "second commit"}, backend);
+        List<String> addedFiles = versionControlSystem.getUtilsToRemove().getAddedFiles();
+        new ConsoleExecutor().run(new String[]{"commit", "second commit"}, versionControlSystem);
 
-        Commit commit = backend.getRepository().getBranches().get(0).getCommits().get(1);
+        Commit commit = versionControlSystem.getRepository().getBranches().get(0).getCommits().get(1);
 
         for (String addedFile : addedFiles) {
             File file = Paths.get(
-                    backend.getRepositoryUtils()
+                    versionControlSystem.getUtilsToRemove()
                             .getCommitDirPath(commit)
                             .toString(),
                     addedFile).toFile();
@@ -106,15 +106,15 @@ public class CommitCommandTest {
 
         addFiles(files);
 
-        Backend backend = new BackendBuilder().build(folder.getRoot());
-        new ConsoleExecutor().run(new String[]{"commit", "first commit"}, backend);
+        VersionControlSystem versionControlSystem = BackendBuilder.build(folder.getRoot());
+        new ConsoleExecutor().run(new String[]{"commit", "first commit"}, versionControlSystem);
 
         new File(folder.getRoot(), "first").delete();
         new File(folder.getRoot(), "folder/in").delete();
 
-        new ConsoleExecutor().run(new String[]{"commit", "second commit"}, backend);
+        new ConsoleExecutor().run(new String[]{"commit", "second commit"}, versionControlSystem);
 
-        Commit commit = backend.getRepository().getBranches().get(0).getCommits().get(1);
+        Commit commit = versionControlSystem.getRepository().getBranches().get(0).getCommits().get(1);
 
         assertEquals("should have 2 removed files", 2, commit.getRemovedFiles().size());
     }
@@ -133,8 +133,8 @@ public class CommitCommandTest {
             args[++i] = fileName;
         }
 
-        Backend backend = new BackendBuilder().build(folder.getRoot());
-        new ConsoleExecutor().run(args, backend);
+        VersionControlSystem versionControlSystem = BackendBuilder.build(folder.getRoot());
+        new ConsoleExecutor().run(args, versionControlSystem);
     }
 
 }
