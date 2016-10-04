@@ -25,6 +25,7 @@ public class CommandFactory {
         commands.put("merge", MergeCommand::new);
         commands.put("status", StatusCommand::new);
         commands.put("clean", CleanCommand::new);
+        commands.put("reset", ResetCommand::new);
     }
 
     private CommandFactory() {
