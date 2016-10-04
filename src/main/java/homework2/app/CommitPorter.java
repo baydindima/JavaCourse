@@ -12,12 +12,12 @@ import java.util.Map;
 import static java.nio.file.StandardCopyOption.COPY_ATTRIBUTES;
 
 /**
- * @author Dmitriy Baidin on 10/3/2016.
+ * This class copy files from commit dir to project directory and back
  */
 public class CommitPorter {
     private final FileSystem fileSystem;
 
-    public CommitPorter(FileSystem fileSystem) {
+    CommitPorter(FileSystem fileSystem) {
         this.fileSystem = fileSystem;
     }
 

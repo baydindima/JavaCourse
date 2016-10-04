@@ -6,7 +6,7 @@ import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 
 /**
- * @author Dmitriy Baidin on 9/23/2016.
+ * This class working with file system
  */
 public class FileSystem {
     static final String ADDED_FILES_FILE_NAME = "added_files";

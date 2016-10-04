@@ -10,4 +10,8 @@ Supporting of operations:
 * log - list of commits
 * close - close branch
 * merge - merge revisions
+* rm - remove file
+* status - current files status
+* clean - remove all files in project dir except trackable
+* reset - return file's state to previous committed state 
 

@@ -10,7 +10,7 @@ import java.io.*;
 import static homework2.app.FileSystem.REPOSITORY_INFO_NAME;
 
 /**
- * @author Dmitriy Baidin on 10/3/2016.
+ * This class loads and saves rep
  */
 public class RepositoryLoader {
     private final FileSystem fileSystem;

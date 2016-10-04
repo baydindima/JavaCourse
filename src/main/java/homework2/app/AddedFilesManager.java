@@ -8,12 +8,12 @@ import java.util.stream.Collectors;
 import static homework2.app.FileSystem.ADDED_FILES_FILE_NAME;
 
 /**
- * @author Dmitriy Baidin on 10/3/2016.
+ * This class works with files, which has been added but not committed
  */
 public class AddedFilesManager {
     private final FileSystem fileSystem;
 
-    public AddedFilesManager(FileSystem fileSystem) {
+    AddedFilesManager(FileSystem fileSystem) {
         this.fileSystem = fileSystem;
     }
 

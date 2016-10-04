@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * @author Dmitriy Baidin on 9/24/2016.
+ * This is class-holder of all util classes
  */
 @Getter
 @AllArgsConstructor

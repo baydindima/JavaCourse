@@ -7,7 +7,7 @@ import homework2.model.Repository;
 import java.util.*;
 
 /**
- * @author Dmitriy Baidin on 10/3/2016.
+ * This class are walking through commit tree
  */
 public class CommitTreeCrawler {
 
