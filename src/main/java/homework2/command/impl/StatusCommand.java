@@ -41,19 +41,26 @@ public class StatusCommand implements Command {
 
         List<String> addedFiles = versionControlSystem.getAddedFilesManager().getAddedFiles();
 
-        System.out.println("Changed files:");
-        for (FileInfo changedFile : changedFiles) {
-            System.out.println(changedFile.getPath());
+        if (changedFiles.size() > 0) {
+            System.out.println("Changed files:");
+            for (FileInfo changedFile : changedFiles) {
+                System.out.println(changedFile.getPath());
+            }
         }
 
-        System.out.println("Removed files:");
-        for (FileInfo removedFile : removedFiles) {
-            System.out.println(removedFile.getPath());
+        if (removedFiles.size() > 0) {
+            System.out.println("Removed files:");
+            for (FileInfo removedFile : removedFiles) {
+                System.out.println(removedFile.getPath());
+            }
         }
 
-        System.out.println("Added files:");
-        addedFiles.forEach(System.out::println);
+        if (addedFiles.size() > 0) {
+            System.out.println("Added files:");
+            addedFiles.forEach(System.out::println);
+        }
 
-        return null;
+
+        return "";
     }
 }

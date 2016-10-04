@@ -26,6 +26,7 @@ public class CommandFactory {
         commands.put("status", StatusCommand::new);
         commands.put("clean", CleanCommand::new);
         commands.put("reset", ResetCommand::new);
+        commands.put("rm", RmCommand::new);
     }
 
     private CommandFactory() {

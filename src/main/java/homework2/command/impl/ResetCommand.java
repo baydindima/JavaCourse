@@ -51,8 +51,8 @@ public class ResetCommand implements Command {
 
                 Path commitDirPath = versionControlSystem.getCommitPorter().getCommitDirPath(commit);
 
-                Files.copy(Paths.get(currentDirPath.toString(), filePath),
-                        Paths.get(commitDirPath.toString(), filePath), COPY_ATTRIBUTES);
+                Files.copy(Paths.get(commitDirPath.toString(), filePath),
+                        Paths.get(currentDirPath.toString(), filePath), COPY_ATTRIBUTES);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

@@ -22,7 +22,7 @@ public class ConsoleExecutor {
 
                 versionControlSystem.getRepositoryLoader().saveRepository(versionControlSystem.getRepository());
             } catch (Exception e) {
-//                e.printStackTrace();
+                e.printStackTrace();
                 System.out.println(e.getMessage());
             }
         }
