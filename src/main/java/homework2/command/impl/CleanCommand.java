@@ -25,6 +25,10 @@ public class CleanCommand implements Command {
     public String execute(VersionControlSystem versionControlSystem, String[] args) {
         versionControlSystem.getRepositoryLoader().checkRepositoryInit();
 
+        if (args.length > 0) {
+            throw new RuntimeException("Clean doesn't take args");
+        }
+
         Set<String> trackableFilesPath = new HashSet<>();
 
         Map<FileInfo, Commit> fileInfoCommitMap = versionControlSystem.getCommitTreeCrawler()
@@ -39,7 +43,8 @@ public class CleanCommand implements Command {
             Files.walkFileTree(versionControlSystem.getFileSystem().getCurrentDirPath(), new SimpleFileVisitor<Path>() {
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                    if (!trackableFilesPath.contains(file.toString())) {
+                    if (!trackableFilesPath.contains(
+                            versionControlSystem.getFileSystem().getCurrentDirPath().relativize(file).toString())) {
                         Files.delete(file);
                     }
                     return FileVisitResult.CONTINUE;
@@ -59,6 +64,6 @@ public class CleanCommand implements Command {
             throw new RuntimeException("Failed to clear project", e);
         }
 
-        return null;
+        return "Project cleaned";
     }
 }
