@@ -23,6 +23,8 @@ public class CommandFactory {
         commands.put("init", InitCommand::new);
         commands.put("log", LogCommand::new);
         commands.put("merge", MergeCommand::new);
+        commands.put("status", StatusCommand::new);
+        commands.put("clean", CleanCommand::new);
     }
 
     private CommandFactory() {
