@@ -1,7 +1,7 @@
 package homework4.ftp.model;
 
 /**
- * Created by Dmitriy Baidin.
+ * Mark interface for query to server
  */
 public interface Query {
 }

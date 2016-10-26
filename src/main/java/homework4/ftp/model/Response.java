@@ -1,7 +1,7 @@
 package homework4.ftp.model;
 
 /**
- * Created by Dmitriy Baidin.
+ * Mark interface of response from server
  */
 public interface Response {
 }

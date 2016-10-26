@@ -19,24 +19,44 @@ import java.nio.channels.Channels;
 import java.nio.channels.CompletionHandler;
 
 /**
- * Created by Dmitriy Baidin.
+ * Abstract server
  */
 @Slf4j
 public abstract class Server implements Closeable {
+    /**
+     * Port for listening
+     */
     @Getter
     private final int port;
+
+    /**
+     * True if already started, false othrewise
+     */
     @Getter
     private boolean isStarted;
+    /**
+     * True if already closed, false otherwise
+     */
     @Getter
     private boolean isClosed;
 
     private AsynchronousServerSocketChannel serverSocketChannel;
 
+    /**
+     * Create new instance of server, that listening specified port
+     *
+     * @param port post for listeing
+     */
     Server(int port) {
         this.port = port;
     }
 
 
+    /**
+     * Start listening port
+     *
+     * @throws IOException if IO exception occurs
+     */
     public void start() throws IOException {
         if (isStarted) {
             throw new InvalidStateException("Server already started!");
@@ -90,6 +110,11 @@ public abstract class Server implements Closeable {
         }
     }
 
+    /**
+     * Stop listening port and close sockets
+     *
+     * @throws IOException of IO exception occurs
+     */
     public void close() throws IOException {
         isClosed = true;
         if (serverSocketChannel != null) {

@@ -11,13 +11,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Dmitriy Baidin.
+ * FTP server
  */
 @Slf4j
 public class FtpServer extends Server {
 
     private final Path dirPath;
 
+    /**
+     * Create new instance of FTP server
+     *
+     * @param port    port of FTP server
+     * @param dirPath path of root directory on server
+     */
     public FtpServer(int port, Path dirPath) {
         super(port);
         this.dirPath = dirPath;

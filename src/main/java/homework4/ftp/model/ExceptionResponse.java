@@ -5,9 +5,12 @@ import lombok.Data;
 import java.io.Serializable;
 
 /**
- * Created by Dmitriy Baidin.
+ * Response of exception on server side
  */
 @Data
 public class ExceptionResponse implements Serializable, Response {
+    /**
+     * Message of exception
+     */
     private final String message;
 }
