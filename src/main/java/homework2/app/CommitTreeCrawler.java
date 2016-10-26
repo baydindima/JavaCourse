@@ -11,6 +11,12 @@ import java.util.*;
  */
 public class CommitTreeCrawler {
 
+    /**
+     * Collects files from root commit to current commit.
+     *
+     * @param repository current repository
+     * @return list of paths to files in VCS, which from the commit
+     */
     public Map<FileInfo, Commit> collectFiles(Repository repository) {
         if (repository.getCurrentRevisionId() == null) {
             return Collections.emptyMap();
@@ -19,6 +25,9 @@ public class CommitTreeCrawler {
     }
 
     /**
+     * Collects files from root commit to specified commit.
+     * File added in map if it changed in that commit.
+     *
      * @param revisionId id of commit
      * @return list of paths to files in VCS, which from the  commit
      */

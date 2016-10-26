@@ -1,6 +1,5 @@
 package homework2.storage;
 
-import homework2.model.InMemoryRepository;
 import homework2.model.Repository;
 
 import java.io.IOException;
@@ -8,10 +7,13 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 
 /**
- * @author Dmitriy Baidin on 9/21/2016.
+ * Write repository to output stream
  */
 public class RepositoryWriter {
 
+    /**
+     * Write repository to output stream
+     */
     public void write(Repository repository, OutputStream outputStream) {
         try (ObjectOutputStream out = new ObjectOutputStream(outputStream)) {
             out.writeObject(repository);

@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 /**
- * @author Dmitriy Baidin on 9/23/2016.
+ * Factory of commands
  */
 public class CommandFactory {
 
@@ -32,6 +32,13 @@ public class CommandFactory {
     private CommandFactory() {
     }
 
+
+    /**
+     * Create new instance of command, if no such command then return FailCommand instance
+     *
+     * @param name name of command
+     * @return instance of command
+     */
     public static Command getCommandByName(String name) {
         return commands.getOrDefault(name, FailCommand::new).get();
     }

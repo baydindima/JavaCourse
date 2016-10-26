@@ -1,5 +1,6 @@
 package homework2.app;
 
+import homework2.exception.FileSystemIOException;
 import homework2.model.Commit;
 import homework2.model.FileInfo;
 
@@ -21,6 +22,11 @@ public class CommitPorter {
         this.fileSystem = fileSystem;
     }
 
+    /**
+     * Copy all committed files from specified commit from project to commit's directory
+     *
+     * @param commit specified commit
+     */
     public void copyFilesToCommitDir(Commit commit) {
         Path commitDirPath = getCommitDirPath(commit);
         Path currentDirPath = fileSystem.getCurrentDirPath();
@@ -35,10 +41,14 @@ public class CommitPorter {
                         commitPath, COPY_ATTRIBUTES);
             }
         } catch (IOException e) {
-            throw new RuntimeException(e.getMessage(), e);
+            throw new FileSystemIOException(e.getMessage(), e);
         }
     }
 
+    /**
+     * Copy files from different commits' directories to project directory
+     * @param fileInfoCommitMap map fileInfo to commit, describe commit directory for file
+     */
     public void copyFilesFromCommitDirs(Map<FileInfo, Commit> fileInfoCommitMap) {
         Path currentDirPath = fileSystem.getCurrentDirPath();
 
@@ -52,11 +62,16 @@ public class CommitPorter {
                         filePath, COPY_ATTRIBUTES);
             }
         } catch (IOException e) {
-            throw new RuntimeException(e.getMessage(), e);
+            throw new FileSystemIOException(e.getMessage(), e);
         }
     }
 
 
+    /**
+     * Get path of commit directory
+     * @param commit specified commit
+     * @return path to commit's directory
+     */
     public Path getCommitDirPath(Commit commit) {
         return Paths.get(fileSystem.getVcsDirPath().toString(), String.valueOf(commit.getId()));
     }

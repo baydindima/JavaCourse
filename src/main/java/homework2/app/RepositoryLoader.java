@@ -1,5 +1,7 @@
 package homework2.app;
 
+import homework2.exception.FileSystemIOException;
+import homework2.exception.RepositoryException;
 import homework2.model.InMemoryRepository;
 import homework2.model.Repository;
 import homework2.storage.RepositoryReader;
@@ -15,16 +17,24 @@ import static homework2.app.FileSystem.REPOSITORY_INFO_NAME;
 public class RepositoryLoader {
     private final FileSystem fileSystem;
 
-    public RepositoryLoader(FileSystem fileSystem) {
+    RepositoryLoader(FileSystem fileSystem) {
         this.fileSystem = fileSystem;
     }
 
+    /**
+     * Check initialization of repository in current directory
+     */
     public void checkRepositoryInit() {
         if (!fileSystem.getVcsDirPath().toFile().exists()) {
-            throw new RuntimeException("Repository hasn't been init");
+            throw new RepositoryException("Repository hasn't been init");
         }
     }
 
+    /**
+     * Try load repository info from vcs directory, or else create new repository
+     *
+     * @return repository instance
+     */
     public Repository loadRepository() {
         if (fileSystem.getVcsDirPath().toFile().exists()) {
             try {
@@ -33,14 +43,19 @@ public class RepositoryLoader {
                                 new File(fileSystem.getVcsDirPath().toString(), REPOSITORY_INFO_NAME))
                         );
             } catch (FileNotFoundException e) {
-                throw new RuntimeException(e.getMessage(), e);
+                throw new FileSystemIOException(e.getMessage(), e);
             }
         } else {
             return new InMemoryRepository();
         }
     }
 
-    public void saveRepository(Repository repository) throws IOException {
+    /**
+     * Save repository status to file system
+     *
+     * @param repository repository for save
+     */
+    public void saveRepository(Repository repository) {
         File repositoryFile = new File(fileSystem.getVcsDirPath().toFile(), REPOSITORY_INFO_NAME);
 
         try (FileOutputStream outputStream = new FileOutputStream(repositoryFile, false)) {

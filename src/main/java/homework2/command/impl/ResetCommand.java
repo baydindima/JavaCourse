@@ -2,6 +2,8 @@ package homework2.command.impl;
 
 import homework2.app.VersionControlSystem;
 import homework2.command.Command;
+import homework2.exception.FileSystemIOException;
+import homework2.exception.InvalidArgumentsException;
 import homework2.model.Commit;
 import homework2.model.FileInfo;
 
@@ -16,15 +18,19 @@ import java.util.Map;
 import static java.nio.file.StandardCopyOption.COPY_ATTRIBUTES;
 
 /**
- * @author Dmitriy Baidin on 10/4/2016.
+ * Reset files in args to previous version
  */
 public class ResetCommand implements Command {
+
+    /**
+     * Reset files in args to previous version
+     */
     @Override
     public String execute(VersionControlSystem versionControlSystem, String[] args) {
         versionControlSystem.getRepositoryLoader().checkRepositoryInit();
 
         if (args.length == 0) {
-            throw new RuntimeException("Nothing to add");
+            throw new InvalidArgumentsException("Nothing to add", args);
         }
 
         Map<FileInfo, Commit> fileInfoCommitMap = versionControlSystem.getCommitTreeCrawler()
@@ -38,11 +44,11 @@ public class ResetCommand implements Command {
         Path currentDirPath = versionControlSystem.getFileSystem().getCurrentDirPath();
         for (String filePath : args) {
             if (!new File(currentDirPath.toString(), filePath).exists()) {
-                throw new RuntimeException(String.format("No such file:%s", filePath));
+                throw new InvalidArgumentsException(String.format("No such file:%s", filePath), args);
             }
             Commit commit = pathToCommit.get(filePath);
             if (commit == null) {
-                throw new RuntimeException(String.format("No previous version for file: %s", filePath));
+                throw new InvalidArgumentsException(String.format("No previous version for file: %s", filePath), args);
             }
 
             try {
@@ -54,7 +60,7 @@ public class ResetCommand implements Command {
                 Files.copy(Paths.get(commitDirPath.toString(), filePath),
                         Paths.get(currentDirPath.toString(), filePath), COPY_ATTRIBUTES);
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                throw new FileSystemIOException(e.getMessage(), e);
             }
         }
 

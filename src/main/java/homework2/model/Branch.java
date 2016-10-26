@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * @author Dmitriy Baidin on 9/21/2016.
+ * Branch of repository
  */
 public class Branch implements Serializable {
     @Getter
@@ -74,20 +74,38 @@ public class Branch implements Serializable {
         return commit;
     }
 
+    /**
+     * Get all commits of current branch
+     *
+     * @return all commits of current branch
+     */
     public List<Commit> getCommits() {
         return Collections.unmodifiableList(commits);
     }
 
+    /**
+     * Get last commit of current branch
+     *
+     * @return last commit of current branch
+     */
     public Commit getLastCommit() {
         Branch.isNotEmpty(this);
         return commits.get(commits.size() - 1);
     }
 
+    /**
+     * Get first commit of current branch
+     *
+     * @return first commit of current branch
+     */
     public Commit getFirstCommit() {
         Branch.isNotEmpty(this);
         return commits.get(0);
     }
 
+    /**
+     * @return true if no commits in current branch, false otherwise
+     */
     public boolean isEmpty() {
         return commits.isEmpty();
     }

@@ -7,16 +7,19 @@ import homework2.model.FileInfo;
 
 import java.io.File;
 import java.nio.file.Path;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
- * @author Dmitriy Baidin on 10/4/2016.
+ * Return current status of repository.
+ * All changed, added and removed files.
  */
 public class StatusCommand implements Command {
 
+
+    /**
+     * Return current status of repository.
+     * All changed, added and removed files.
+     */
     @Override
     public String execute(VersionControlSystem versionControlSystem, String[] args) {
         versionControlSystem.getRepositoryLoader().checkRepositoryInit();
@@ -41,26 +44,18 @@ public class StatusCommand implements Command {
 
         List<String> addedFiles = versionControlSystem.getAddedFilesManager().getAddedFiles();
 
-        if (changedFiles.size() > 0) {
-            System.out.println("Changed files:");
-            for (FileInfo changedFile : changedFiles) {
-                System.out.println(changedFile.getPath());
-            }
-        }
-
-        if (removedFiles.size() > 0) {
-            System.out.println("Removed files:");
-            for (FileInfo removedFile : removedFiles) {
-                System.out.println(removedFile.getPath());
-            }
-        }
-
-        if (addedFiles.size() > 0) {
-            System.out.println("Added files:");
-            addedFiles.forEach(System.out::println);
-        }
-
+        printCollection("Changed files", changedFiles);
+        printCollection("Removed files", removedFiles);
+        printCollection("Added files", addedFiles);
 
         return "";
     }
+
+    private void printCollection(String collectionName, Collection<?> collection) {
+        if (collection.size() > 0) {
+            System.out.println(collectionName + ":");
+            collection.forEach(System.out::println);
+        }
+    }
+
 }

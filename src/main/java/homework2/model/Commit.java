@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * @author Dmitriy Baidin on 9/21/2016.
+ * Commit of repository
  */
 public class Commit implements Serializable {
     @Getter
@@ -51,10 +51,20 @@ public class Commit implements Serializable {
                 removedFiles);
     }
 
+    /**
+     * Get all changed files of current commit
+     *
+     * @return all changed files of current commit
+     */
     public List<FileInfo> getFiles() {
         return Collections.unmodifiableList(files);
     }
 
+    /**
+     * Get all removed files of current commit
+     *
+     * @return all removed files of current commit
+     */
     public List<FileInfo> getRemovedFiles() {
         return Collections.unmodifiableList(removedFiles);
     }

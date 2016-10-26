@@ -2,6 +2,7 @@ package homework2.command.impl;
 
 import homework2.app.VersionControlSystem;
 import homework2.command.Command;
+import homework2.exception.InvalidArgumentsException;
 import homework2.model.Commit;
 import homework2.model.FileInfo;
 
@@ -11,19 +12,23 @@ import java.nio.file.Paths;
 import java.util.*;
 
 /**
- * @author Dmitriy Baidin on 9/23/2016.
+ * Commit current changes, add all added and changed files, stores information about removed files
  */
 public class CommitCommand implements Command {
+
+    /**
+     * Commit current changes, add all added and changed files, stores information about removed files
+     */
     @Override
     public String execute(VersionControlSystem versionControlSystem, String[] args) {
         versionControlSystem.getRepositoryLoader().checkRepositoryInit();
 
         if (args.length == 0) {
-            throw new RuntimeException("Commit should contain message");
+            throw new InvalidArgumentsException("Commit should contain message", args);
         }
 
         if (args.length > 1) {
-            throw new RuntimeException("Commit take only 1 arg");
+            throw new InvalidArgumentsException("Commit take only 1 arg", args);
         }
 
         String message = args[0];

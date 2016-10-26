@@ -5,7 +5,7 @@ import lombok.Data;
 import java.io.Serializable;
 
 /**
- * @author Dmitriy Baidin on 9/23/2016.
+ * Class contains path of file and last update date
  */
 @Data
 public class FileInfo implements Serializable {

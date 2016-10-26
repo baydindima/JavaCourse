@@ -2,6 +2,8 @@ package homework2.command.impl;
 
 import homework2.app.VersionControlSystem;
 import homework2.command.Command;
+import homework2.exception.FileSystemIOException;
+import homework2.exception.InvalidArgumentsException;
 import homework2.model.Commit;
 import homework2.model.FileInfo;
 
@@ -18,15 +20,19 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * @author Dmitriy Baidin on 10/4/2016.
+ * Remove all not trackable files from project directory
  */
 public class CleanCommand implements Command {
+
+    /**
+     * Remove all not trackable files from project directory
+     */
     @Override
     public String execute(VersionControlSystem versionControlSystem, String[] args) {
         versionControlSystem.getRepositoryLoader().checkRepositoryInit();
 
         if (args.length > 0) {
-            throw new RuntimeException("Clean doesn't take args");
+            throw new InvalidArgumentsException("Clean doesn't take args", args);
         }
 
         Set<String> trackableFilesPath = new HashSet<>();
@@ -61,7 +67,7 @@ public class CleanCommand implements Command {
                 }
             });
         } catch (IOException e) {
-            throw new RuntimeException("Failed to clear project", e);
+            throw new FileSystemIOException("Failed to clear project", e);
         }
 
         return "Project cleaned";

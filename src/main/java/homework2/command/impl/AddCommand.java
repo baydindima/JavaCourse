@@ -2,27 +2,32 @@ package homework2.command.impl;
 
 import homework2.app.VersionControlSystem;
 import homework2.command.Command;
+import homework2.exception.InvalidArgumentsException;
 
 import java.io.File;
 import java.nio.file.Path;
 import java.util.*;
 
 /**
- * @author Dmitriy Baidin on 9/23/2016.
+ * Add files in args to list of added files
  */
 public class AddCommand implements Command {
+
+    /**
+     * Add files in args to list of added files
+     */
     @Override
     public String execute(VersionControlSystem versionControlSystem, String[] args) {
         versionControlSystem.getRepositoryLoader().checkRepositoryInit();
 
         if (args.length == 0) {
-            throw new RuntimeException("Nothing to add");
+            throw new InvalidArgumentsException("Nothing to add", args);
         }
 
         Path currentDirPath = versionControlSystem.getFileSystem().getCurrentDirPath();
         for (String filePath : args) {
             if (!new File(currentDirPath.toString(), filePath).exists()) {
-                throw new RuntimeException(String.format("No such file:%s", filePath));
+                throw new InvalidArgumentsException(String.format("No such file:%s", filePath), args);
             }
         }
 

@@ -5,7 +5,7 @@ import homework2.app.ConsoleExecutor;
 import homework2.app.VersionControlSystem;
 
 /**
- * @author Dmitriy Baidin on 9/21/2016.
+ * Main class for application
  */
 public class Main {
 

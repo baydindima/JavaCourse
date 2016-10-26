@@ -2,26 +2,31 @@ package homework2.command.impl;
 
 import homework2.app.VersionControlSystem;
 import homework2.command.Command;
+import homework2.exception.InvalidArgumentsException;
 
 import java.io.File;
 import java.nio.file.Path;
 
 /**
- * @author Dmitriy Baidin on 10/4/2016.
+ * Remove file from project
  */
 public class RmCommand implements Command {
+
+    /**
+     * Remove file from project
+     */
     @Override
     public String execute(VersionControlSystem versionControlSystem, String[] args) {
         versionControlSystem.getRepositoryLoader().checkRepositoryInit();
 
         if (args.length == 0) {
-            throw new RuntimeException("Nothing to delete");
+            throw new InvalidArgumentsException("Nothing to delete", args);
         }
 
         Path currentDirPath = versionControlSystem.getFileSystem().getCurrentDirPath();
         for (String filePath : args) {
             if (!new File(currentDirPath.toString(), filePath).exists()) {
-                throw new RuntimeException(String.format("No such file:%s", filePath));
+                throw new InvalidArgumentsException(String.format("No such file:%s", filePath), args);
             }
             //noinspection ResultOfMethodCallIgnored
             new File(currentDirPath.toString(), filePath).delete();

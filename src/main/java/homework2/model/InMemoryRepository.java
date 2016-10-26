@@ -6,7 +6,7 @@ import java.io.Serializable;
 import java.util.*;
 
 /**
- * @author Dmitriy Baidin on 9/21/2016.
+ * Model of in memory repository
  */
 public class InMemoryRepository implements Serializable, Repository {
     private final List<Branch> branches = new ArrayList<>();

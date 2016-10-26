@@ -1,5 +1,7 @@
 package homework2.app;
 
+import homework2.exception.FileSystemIOException;
+
 import java.io.*;
 import java.util.Collections;
 import java.util.List;
@@ -17,6 +19,9 @@ public class AddedFilesManager {
         this.fileSystem = fileSystem;
     }
 
+    /**
+     * Return all added files, but not commited files
+     */
     public List<String> getAddedFiles() {
         File addedFiles = new File(fileSystem.getVcsDirPath().toFile(), ADDED_FILES_FILE_NAME);
 
@@ -28,10 +33,16 @@ public class AddedFilesManager {
             BufferedReader bufferReader = new BufferedReader(fileReader);
             return bufferReader.lines().collect(Collectors.toList());
         } catch (IOException e) {
-            throw new RuntimeException(e.getMessage(), e);
+            throw new FileSystemIOException(e.getMessage(), e);
         }
     }
 
+
+    /**
+     * Set new list of added files
+     *
+     * @param files list of files' paths that will be new added files
+     */
     public void setAddedFiles(List<String> files) {
         File addedFiles = new File(fileSystem.getVcsDirPath().toFile(), ADDED_FILES_FILE_NAME);
 
@@ -46,10 +57,13 @@ public class AddedFilesManager {
             }
             bufferWriter.flush();
         } catch (IOException e) {
-            throw new RuntimeException(e.getMessage(), e);
+            throw new FileSystemIOException(e.getMessage(), e);
         }
     }
 
+    /**
+     * Clear list of added files
+     */
     public void clearAddedFiles() {
         File addedFiles = new File(fileSystem.getVcsDirPath().toFile(), ADDED_FILES_FILE_NAME);
         if (addedFiles.exists()) {

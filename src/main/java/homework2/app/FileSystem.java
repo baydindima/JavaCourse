@@ -1,5 +1,7 @@
 package homework2.app;
 
+import homework2.exception.FileSystemIOException;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.*;
@@ -22,13 +24,24 @@ public class FileSystem {
         return Paths.get(curDir.getAbsolutePath()).toAbsolutePath().normalize();
     }
 
+    /**
+     * Get current path of vsc directory
+     *
+     * @return current path of vsc directory
+     */
     public Path getVcsDirPath() {
         return Paths.get(getCurrentDirPath().toString(), VSC_DIR_NAME).toAbsolutePath().normalize();
     }
 
+    /**
+     * Wrapper-function for mkdirs
+     * Throw unchecked exception FileSystemIOException if failed
+     *
+     * @param file
+     */
     public void createDirs(File file) {
         if (!file.mkdirs()) {
-            throw new RuntimeException("Failed to create dir");
+            throw new FileSystemIOException("Failed to create dir");
         }
     }
 
@@ -61,7 +74,7 @@ public class FileSystem {
                 }
             });
         } catch (IOException e) {
-            throw new RuntimeException("Failed to clear project", e);
+            throw new FileSystemIOException("Failed to clear project", e);
         }
     }
 

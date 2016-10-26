@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * This is class-holder of all util classes
+ * This is class store current context
  */
 @Getter
 @AllArgsConstructor

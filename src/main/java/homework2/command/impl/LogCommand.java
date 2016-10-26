@@ -2,18 +2,23 @@ package homework2.command.impl;
 
 import homework2.app.VersionControlSystem;
 import homework2.command.Command;
+import homework2.exception.InvalidArgumentsException;
 import homework2.model.Branch;
 import homework2.model.Commit;
 
 /**
- * @author Dmitriy Baidin on 9/23/2016.
+ * Return history of all commits from current commit to root commit
  */
 public class LogCommand implements Command {
+
+    /**
+     * Return history of all commits from current commit to root commit
+     */
     @Override
     public String execute(VersionControlSystem versionControlSystem, String[] args) {
         versionControlSystem.getRepositoryLoader().checkRepositoryInit();
         if (args.length > 0) {
-            throw new RuntimeException("Log doesn't take args");
+            throw new InvalidArgumentsException("Log doesn't take args", args);
         }
 
         Branch branch = versionControlSystem.getRepository()
