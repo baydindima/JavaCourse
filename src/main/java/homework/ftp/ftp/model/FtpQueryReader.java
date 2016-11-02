@@ -3,6 +3,7 @@ package homework.ftp.ftp.model;
 import homework.ftp.ftp.exception.InvalidQueryFormat;
 import homework.ftp.ftp.model.reader.IntReader;
 import homework.ftp.ftp.model.reader.StringReader;
+import homework.torrent.model.reader.ObjectReader;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.ByteBuffer;

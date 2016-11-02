@@ -3,6 +3,7 @@ package homework.ftp.ftp.client;
 import homework.ftp.ftp.exception.InvalidResponseFormat;
 import homework.ftp.ftp.exception.ServerException;
 import homework.ftp.ftp.model.*;
+import homework.torrent.model.reader.ObjectReader;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;

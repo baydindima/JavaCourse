@@ -1,4 +1,4 @@
-package homework.ftp.ftp.model;
+package homework.torrent.model.reader;
 
 import org.jetbrains.annotations.NotNull;
 

@@ -1,5 +1,6 @@
 package homework.ftp.ftp.model;
 
+import homework.torrent.model.reader.ObjectReader;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 

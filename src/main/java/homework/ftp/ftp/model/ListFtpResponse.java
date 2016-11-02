@@ -7,6 +7,7 @@ import homework.ftp.ftp.model.reader.StringReader;
 import homework.ftp.ftp.model.writer.BooleanWriter;
 import homework.ftp.ftp.model.writer.IntWriter;
 import homework.ftp.ftp.model.writer.StringWriter;
+import homework.torrent.model.reader.ObjectReader;
 import lombok.Data;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

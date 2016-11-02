@@ -1,4 +1,4 @@
-package homework.ftp.ftp.server;
+package homework.torrent.server;
 
 
 import homework.ftp.ftp.exception.InvalidProcessorStateException;

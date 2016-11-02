@@ -2,6 +2,7 @@ package homework.ftp.ftp.model;
 
 import homework.ftp.ftp.exception.InvalidProcessorStateException;
 import homework.ftp.ftp.model.reader.IntReader;
+import homework.torrent.model.reader.ObjectReader;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

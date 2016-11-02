@@ -1,7 +1,7 @@
 package homework.ftp.ftp.client;
 
-import homework.ftp.ftp.model.ObjectReader;
 import homework.ftp.ftp.model.ObjectWriter;
+import homework.torrent.model.reader.ObjectReader;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 
