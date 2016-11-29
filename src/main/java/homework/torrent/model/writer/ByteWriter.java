@@ -1,7 +1,7 @@
 package homework.torrent.model.writer;
 
 /**
- * Created by Dmitriy Baidin.
+ * ObjectWriter for byte.
  */
 public class ByteWriter extends AbstractObjectWriter {
     /**

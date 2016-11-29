@@ -30,6 +30,6 @@ public class SeqObjectWriter implements ObjectWriter {
 
     @Override
     public boolean isComplete() {
-        return false;
+        return curWriter >= writers.length;
     }
 }

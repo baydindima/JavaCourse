@@ -1,21 +1,23 @@
 package homework.torrent.model;
 
+import homework.torrent.model.reader.AbstractSingleReader;
 import homework.torrent.model.reader.ListObjectReader;
 import homework.torrent.model.reader.ObjectReader;
 import homework.torrent.model.writer.ListObjectWriter;
 import homework.torrent.model.writer.ObjectWriter;
 import lombok.Data;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.nio.ByteBuffer;
 import java.util.List;
 
 /**
- * Created by Dmitriy Baidin.
+ * List response.
  */
 @Data
 public class ListServerResponse implements SerializableObject {
+    /**
+     * Available files.
+     */
     @NotNull
     private final List<FileInfo> files;
 
@@ -26,29 +28,20 @@ public class ListServerResponse implements SerializableObject {
         return new ListObjectWriter<>(files, FileInfo::getWriter);
     }
 
-    public final static class Reader implements ObjectReader<ListServerResponse> {
+    public final static class Reader extends AbstractSingleReader<ListServerResponse> {
         @NotNull
         private final ListObjectReader<FileInfo> filesReader = new ListObjectReader<>(FileInfo.Reader::new);
-        @Nullable
-        private ListServerResponse result;
 
+        @NotNull
         @Override
-        public int read(@NotNull final ByteBuffer byteBuffer) {
-            return filesReader.read(byteBuffer);
-        }
-
-        @Override
-        public boolean isReady() {
-            return filesReader.isReady();
+        protected ListServerResponse calcResult() {
+            return new ListServerResponse(filesReader.getResult());
         }
 
         @NotNull
         @Override
-        public ListServerResponse getResult() {
-            if (result == null) {
-                result = new ListServerResponse(filesReader.getResult());
-            }
-            return result;
+        protected ObjectReader<?> getReader() {
+            return filesReader;
         }
     }
 }

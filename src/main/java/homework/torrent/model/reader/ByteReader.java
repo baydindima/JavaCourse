@@ -3,10 +3,13 @@ package homework.torrent.model.reader;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Created by Dmitriy Baidin.
+ * ObjectReader of byte.
  */
 public class ByteReader extends AbstractObjectReader<Byte> {
 
+    /**
+     * ObjectReader of byte.
+     */
     public ByteReader() {
         super(1);
     }

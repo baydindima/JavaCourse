@@ -1,21 +1,24 @@
 package homework.torrent.model;
 
-import homework.torrent.exception.InvalidProcessorStateException;
+import homework.torrent.exception.InvalidQueryFormat;
 import homework.torrent.model.reader.*;
 import homework.torrent.model.writer.*;
 import lombok.Data;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.nio.ByteBuffer;
 
 /**
- * Created by Dmitriy Baidin.
+ * Upload query.
  */
 @Data
 public class UploadServerQuery implements SerializableObject, TorrentServerQuery {
+    /**
+     * Name of file
+     */
     @NotNull
     private final String fileName;
+    /**
+     * Size of file in bytes
+     */
     private final long fileSize;
 
     @Override
@@ -23,6 +26,7 @@ public class UploadServerQuery implements SerializableObject, TorrentServerQuery
         return Type.Upload;
     }
 
+    /** Writer for upload query */
     @NotNull
     @Override
     public ObjectWriter getWriter() {
@@ -32,7 +36,10 @@ public class UploadServerQuery implements SerializableObject, TorrentServerQuery
                 new LongWriter(fileSize));
     }
 
-    public static class Reader implements ObjectReader<UploadServerQuery> {
+    /**
+     * Reader for upload query
+     */
+    public static class Reader extends AbstractSingleReader<UploadServerQuery> {
         @NotNull
         private final ByteReader typeReader = new ByteReader();
         @NotNull
@@ -41,32 +48,23 @@ public class UploadServerQuery implements SerializableObject, TorrentServerQuery
         private final LongReader sizeReader = new LongReader();
         @NotNull
         private final SequenceObjectReader seqReader = new SequenceObjectReader(typeReader, fileNameReader, sizeReader);
-        @Nullable
-        private UploadServerQuery result;
 
+        @NotNull
         @Override
-        public int read(@NotNull final ByteBuffer byteBuffer) {
-            return seqReader.read(byteBuffer);
-        }
-
-        @Override
-        public boolean isReady() {
-            return seqReader.isReady();
+        protected UploadServerQuery calcResult() {
+            if (typeReader.getResult() != Type.Upload.getId()) {
+                throw new InvalidQueryFormat(String.format("Expected upload type, but got %s", typeReader.getResult()));
+            }
+            return new UploadServerQuery(
+                    fileNameReader.getResult(),
+                    sizeReader.getResult()
+            );
         }
 
         @NotNull
         @Override
-        public UploadServerQuery getResult() {
-            if (result == null) {
-                if (typeReader.getResult() != Type.Upload.getId()) {
-                    throw new InvalidProcessorStateException(
-                            String.format("Expected upload type, but got %s", typeReader.getResult()));
-                }
-                result = new UploadServerQuery(
-                        fileNameReader.getResult(),
-                        sizeReader.getResult());
-            }
-            return result;
+        protected ObjectReader<?> getReader() {
+            return seqReader;
         }
     }
 }

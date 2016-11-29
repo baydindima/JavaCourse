@@ -1,22 +1,26 @@
 package homework.torrent.model;
 
+import homework.torrent.model.reader.AbstractSingleReader;
 import homework.torrent.model.reader.BooleanReader;
 import homework.torrent.model.reader.ObjectReader;
 import homework.torrent.model.writer.BooleanWriter;
 import homework.torrent.model.writer.ObjectWriter;
 import lombok.Data;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.nio.ByteBuffer;
 
 /**
- * Created by Dmitriy Baidin.
+ * Update response.
  */
 @Data
 public class UpdateServerResponse implements SerializableObject {
+    /**
+     * Status of response.
+     */
     private final boolean status;
 
+    /**
+     * Writer for update response.
+     */
     @NotNull
     @Override
     public ObjectWriter getWriter() {
@@ -24,30 +28,23 @@ public class UpdateServerResponse implements SerializableObject {
     }
 
 
-    public final static class Reader implements ObjectReader<UpdateServerResponse> {
+    /**
+     * Reader for update response.
+     */
+    public final static class Reader extends AbstractSingleReader<UpdateServerResponse> {
         @NotNull
         private final BooleanReader statusReader = new BooleanReader();
-        @Nullable
-        private UpdateServerResponse result;
 
-
+        @NotNull
         @Override
-        public int read(@NotNull final ByteBuffer byteBuffer) {
-            return statusReader.read(byteBuffer);
-        }
-
-        @Override
-        public boolean isReady() {
-            return statusReader.isReady();
+        protected UpdateServerResponse calcResult() {
+            return new UpdateServerResponse(statusReader.getResult());
         }
 
         @NotNull
         @Override
-        public UpdateServerResponse getResult() {
-            if (result == null) {
-                result = new UpdateServerResponse(statusReader.getResult());
-            }
-            return result;
+        protected ObjectReader<?> getReader() {
+            return statusReader;
         }
     }
 

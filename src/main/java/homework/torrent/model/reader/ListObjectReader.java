@@ -36,8 +36,7 @@ public class ListObjectReader<T> implements ObjectReader<List<T>> {
                 result = new ArrayList<>(sizeReader.getResult());
             }
             while (byteBuffer.hasRemaining()
-                    && sizeReader.getResult() == result.size()
-                    && (curReader == null || curReader.isReady())) {
+                    && !isReady()) {
                 if (curReader == null) {
                     curReader = readerSupplier.get();
                 }

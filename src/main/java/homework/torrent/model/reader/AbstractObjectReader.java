@@ -1,6 +1,6 @@
 package homework.torrent.model.reader;
 
-import homework.ftp.ftp.exception.InvalidProcessorStateException;
+import homework.torrent.exception.InvalidProcessorStateException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,9 +22,7 @@ abstract class AbstractObjectReader<T> implements ObjectReader<T> {
     @Nullable
     private byte[] buffer;
 
-    /**
-     * Resulting object.
-     */
+    /** Resulting object. */
     @Nullable
     private T result;
 

@@ -1,20 +1,23 @@
 package homework.torrent.model;
 
-import homework.torrent.exception.InvalidProcessorStateException;
+import homework.torrent.exception.InvalidQueryFormat;
 import homework.torrent.model.reader.*;
 import homework.torrent.model.writer.*;
 import lombok.Data;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.nio.ByteBuffer;
 
 /**
- * Created by Dmitriy Baidin.
+ * Get query.
  */
 @Data
 public class GetClientQuery implements SerializableObject, TorrentClientQuery {
+    /**
+     * Id of file.
+     */
     private final long fileId;
+    /**
+     * Number of part.
+     */
     private final int partId;
 
     @Override
@@ -22,6 +25,7 @@ public class GetClientQuery implements SerializableObject, TorrentClientQuery {
         return Type.Get;
     }
 
+    /** Writer of get query. */
     @NotNull
     @Override
     public ObjectWriter getWriter() {
@@ -30,7 +34,10 @@ public class GetClientQuery implements SerializableObject, TorrentClientQuery {
                 new IntWriter(partId));
     }
 
-    public final static class Reader implements ObjectReader<GetClientQuery> {
+    /**
+     * Reader of get query.
+     */
+    public final static class Reader extends AbstractSingleReader<GetClientQuery> {
         @NotNull
         private final ByteReader typeReader = new ByteReader();
         @NotNull
@@ -39,31 +46,22 @@ public class GetClientQuery implements SerializableObject, TorrentClientQuery {
         private final IntReader partIdReader = new IntReader();
         @NotNull
         private final SequenceObjectReader seqReader = new SequenceObjectReader(typeReader, fileIdReader, partIdReader);
-        @Nullable
-        private GetClientQuery result;
 
-
+        @NotNull
         @Override
-        public int read(@NotNull final ByteBuffer byteBuffer) {
-            return seqReader.read(byteBuffer);
-        }
-
-        @Override
-        public boolean isReady() {
-            return seqReader.isReady();
+        protected GetClientQuery calcResult() {
+            if (typeReader.getResult() != Type.Get.getId()) {
+                throw new InvalidQueryFormat(
+                        String.format("Expected get type, but got %s",
+                                typeReader.getResult()));
+            }
+            return new GetClientQuery(fileIdReader.getResult(), partIdReader.getResult());
         }
 
         @NotNull
         @Override
-        public GetClientQuery getResult() {
-            if (result == null) {
-                if (typeReader.getResult() != TorrentServerQuery.Type.Source.getId()) {
-                    throw new InvalidProcessorStateException(
-                            String.format("Expected get type, but got %s", typeReader.getResult()));
-                }
-                result = new GetClientQuery(fileIdReader.getResult(), partIdReader.getResult());
-            }
-            return result;
+        protected ObjectReader<?> getReader() {
+            return seqReader;
         }
     }
 }

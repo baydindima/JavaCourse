@@ -1,25 +1,22 @@
 package homework.torrent.model;
 
-import homework.torrent.exception.InvalidProcessorStateException;
-import homework.torrent.model.reader.ByteReader;
-import homework.torrent.model.reader.LongReader;
-import homework.torrent.model.reader.ObjectReader;
-import homework.torrent.model.reader.SequenceObjectReader;
+import homework.torrent.exception.InvalidQueryFormat;
+import homework.torrent.model.reader.*;
 import homework.torrent.model.writer.ByteWriter;
 import homework.torrent.model.writer.LongWriter;
 import homework.torrent.model.writer.ObjectWriter;
 import homework.torrent.model.writer.SeqObjectWriter;
 import lombok.Data;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.nio.ByteBuffer;
 
 /**
- * Created by Dmitriy Baidin.
+ * Sources query.
  */
 @Data
 public class SourcesServerQuery implements SerializableObject, TorrentServerQuery {
+    /**
+     * Id of file
+     */
     private final long fileId;
 
     @Override
@@ -27,6 +24,9 @@ public class SourcesServerQuery implements SerializableObject, TorrentServerQuer
         return Type.Source;
     }
 
+    /**
+     * Writer of sources query.
+     */
     @NotNull
     @Override
     public ObjectWriter getWriter() {
@@ -36,37 +36,32 @@ public class SourcesServerQuery implements SerializableObject, TorrentServerQuer
         );
     }
 
-    public final static class Reader implements ObjectReader<SourcesServerQuery> {
+    /**
+     * Reader of sources query.
+     */
+    public final static class Reader extends AbstractSingleReader<SourcesServerQuery> {
         @NotNull
         private final ByteReader typeReader = new ByteReader();
         @NotNull
         private final LongReader fileIdReader = new LongReader();
         @NotNull
         private final SequenceObjectReader seqReader = new SequenceObjectReader(typeReader, fileIdReader);
-        @Nullable
-        private SourcesServerQuery result;
 
+        @NotNull
         @Override
-        public int read(@NotNull final ByteBuffer byteBuffer) {
-            return seqReader.read(byteBuffer);
-        }
-
-        @Override
-        public boolean isReady() {
-            return seqReader.isReady();
+        protected SourcesServerQuery calcResult() {
+            if (typeReader.getResult() != Type.Source.getId()) {
+                throw new InvalidQueryFormat(
+                        String.format("Expected sources type, but got %s",
+                                typeReader.getResult()));
+            }
+            return new SourcesServerQuery(fileIdReader.getResult());
         }
 
         @NotNull
         @Override
-        public SourcesServerQuery getResult() {
-            if (result == null) {
-                if (typeReader.getResult() != Type.Source.getId()) {
-                    throw new InvalidProcessorStateException(
-                            String.format("Expected sources type, but got %s", typeReader.getResult()));
-                }
-                result = new SourcesServerQuery(fileIdReader.getResult());
-            }
-            return result;
+        protected ObjectReader<?> getReader() {
+            return seqReader;
         }
     }
 }

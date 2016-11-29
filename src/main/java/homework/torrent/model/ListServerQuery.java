@@ -1,18 +1,19 @@
 package homework.torrent.model;
 
 
-import homework.torrent.exception.InvalidProcessorStateException;
+import homework.torrent.exception.InvalidQueryFormat;
+import homework.torrent.model.reader.AbstractSingleReader;
 import homework.torrent.model.reader.ByteReader;
 import homework.torrent.model.reader.ObjectReader;
 import homework.torrent.model.writer.ByteWriter;
 import homework.torrent.model.writer.ObjectWriter;
+import lombok.Data;
 import org.jetbrains.annotations.NotNull;
 
-import java.nio.ByteBuffer;
-
 /**
- * Created by Dmitriy Baidin.
+ * List query.
  */
+@Data
 public class ListServerQuery implements TorrentServerQuery, SerializableObject {
     @Override
     public @NotNull TorrentServerQuery.Type getType() {
@@ -20,35 +21,37 @@ public class ListServerQuery implements TorrentServerQuery, SerializableObject {
     }
 
 
+    /**
+     * Writer of get query.
+     */
     @NotNull
     @Override
     public ObjectWriter getWriter() {
         return new ByteWriter(Type.List.getId());
     }
 
-    public static class Reader implements ObjectReader<ListServerQuery> {
+    /**
+     * Reader of list query.
+     */
+    public static class Reader extends AbstractSingleReader<ListServerQuery> {
         @NotNull
         private final ByteReader typeReader = new ByteReader();
 
+        @NotNull
         @Override
-        public int read(@NotNull final ByteBuffer byteBuffer) {
-            return typeReader.read(byteBuffer);
-        }
-
-        @Override
-        public boolean isReady() {
-            return typeReader.isReady();
+        protected ListServerQuery calcResult() {
+            if (typeReader.getResult() != Type.List.getId()) {
+                throw new InvalidQueryFormat(
+                        String.format("Expected upload list, but got %s",
+                                typeReader.getResult()));
+            }
+            return new ListServerQuery();
         }
 
         @NotNull
         @Override
-        public ListServerQuery getResult() {
-            if (typeReader.getResult() == Type.List.getId()) {
-                return new ListServerQuery();
-            } else {
-                throw new InvalidProcessorStateException(
-                        String.format("Expected list type, but got %s", typeReader.getResult()));
-            }
+        protected ObjectReader<?> getReader() {
+            return typeReader;
         }
     }
 

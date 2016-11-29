@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import java.nio.ByteBuffer;
 
 /**
- * ObjectReader of integer.
+ * ObjectReader of boolean.
  */
 public class BooleanReader extends AbstractObjectReader<Boolean> {
     /**

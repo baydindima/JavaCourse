@@ -31,7 +31,10 @@ public class VariantObjectReader<CommonType> implements ObjectReader<CommonType>
         int readCount = 0;
         if (variantBuffer.hasRemaining()) {
             int putCount = Math.min(variantBuffer.remaining(), byteBuffer.remaining());
-            variantBuffer.put(byteBuffer.array(), byteBuffer.position(), putCount);
+            int oldLimit = byteBuffer.limit();
+            byteBuffer.limit(byteBuffer.position() + putCount);
+            variantBuffer.put(byteBuffer);
+            byteBuffer.limit(oldLimit);
             readCount += putCount;
         }
         if (!variantBuffer.hasRemaining()) {
@@ -68,7 +71,6 @@ public class VariantObjectReader<CommonType> implements ObjectReader<CommonType>
         }
         return chosenReader.getResult();
     }
-
 
     @Data
     public static class ReaderVariant<T> {

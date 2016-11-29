@@ -1,6 +1,7 @@
 package homework.torrent.model.writer;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 
@@ -17,6 +18,7 @@ import java.nio.file.StandardOpenOption;
  * Created by Dmitriy Baidin.
  */
 @Slf4j
+@Builder
 public class AsynchronousFileWriter {
     private final static int BUFFER_SIZE = 4 * 1024;
     @NotNull
@@ -90,24 +92,12 @@ public class AsynchronousFileWriter {
                 }
             };
 
-    public AsynchronousFileWriter(@NotNull final AsynchronousSocketChannel outputChannel,
-                                  @NotNull final Path filePath,
-                                  final long offset,
-                                  final int length) {
-        this.outputChannel = outputChannel;
-        this.filePath = filePath;
-        this.offset = offset;
-        this.length = length;
-    }
-
     public void write() {
         int bufferSize = Math.min(length, BUFFER_SIZE);
         ByteBuffer byteBuffer = ByteBuffer.allocate(bufferSize);
-        AsynchronousFileChannel fileChannel = null;
         try {
-            fileChannel = AsynchronousFileChannel.open(filePath,
+            AsynchronousFileChannel fileChannel = AsynchronousFileChannel.open(filePath,
                     StandardOpenOption.READ);
-            byteBuffer.putLong(fileChannel.size());
 
             Attachment attachment = new Attachment(fileChannel, byteBuffer, offset + length, offset);
             attachment.fileChannel.read(attachment.buffer,
@@ -116,9 +106,6 @@ public class AsynchronousFileWriter {
             log.error("Exception while opening file: {}",
                     filePath.toString(), e);
             closeChannel(outputChannel);
-            if (fileChannel != null) {
-                closeChannel(fileChannel);
-            }
         }
     }
 
@@ -131,7 +118,7 @@ public class AsynchronousFileWriter {
     }
 
     @AllArgsConstructor
-    private static class Attachment {
+    static class Attachment {
         /**
          * File channel for reading.
          */

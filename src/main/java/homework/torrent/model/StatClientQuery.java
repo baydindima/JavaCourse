@@ -1,25 +1,22 @@
 package homework.torrent.model;
 
-import homework.torrent.exception.InvalidProcessorStateException;
-import homework.torrent.model.reader.ByteReader;
-import homework.torrent.model.reader.LongReader;
-import homework.torrent.model.reader.ObjectReader;
-import homework.torrent.model.reader.SequenceObjectReader;
+import homework.torrent.exception.InvalidQueryFormat;
+import homework.torrent.model.reader.*;
 import homework.torrent.model.writer.ByteWriter;
 import homework.torrent.model.writer.LongWriter;
 import homework.torrent.model.writer.ObjectWriter;
 import homework.torrent.model.writer.SeqObjectWriter;
 import lombok.Data;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.nio.ByteBuffer;
 
 /**
- * Created by Dmitriy Baidin.
+ * Stat query.
  */
 @Data
 public class StatClientQuery implements TorrentClientQuery, SerializableObject {
+    /**
+     * File id
+     */
     private final long fileId;
 
     @Override
@@ -27,6 +24,9 @@ public class StatClientQuery implements TorrentClientQuery, SerializableObject {
         return Type.Stat;
     }
 
+    /**
+     * Writer of stat query.
+     */
     @NotNull
     @Override
     public ObjectWriter getWriter() {
@@ -36,37 +36,30 @@ public class StatClientQuery implements TorrentClientQuery, SerializableObject {
         );
     }
 
-    public final static class Reader implements ObjectReader<StatClientQuery> {
+    /**
+     * Reader of stat query.
+     */
+    public final static class Reader extends AbstractSingleReader<StatClientQuery> {
         @NotNull
         private final ByteReader typeReader = new ByteReader();
         @NotNull
         private final LongReader idReader = new LongReader();
         @NotNull
         private final SequenceObjectReader seqReader = new SequenceObjectReader(typeReader, idReader);
-        @Nullable
-        private StatClientQuery result;
 
+        @NotNull
         @Override
-        public int read(@NotNull final ByteBuffer byteBuffer) {
-            return seqReader.read(byteBuffer);
-        }
-
-        @Override
-        public boolean isReady() {
-            return seqReader.isReady();
+        protected StatClientQuery calcResult() {
+            if (typeReader.getResult() != Type.Stat.getId()) {
+                throw new InvalidQueryFormat(String.format("Expected stat type, but got %s", typeReader.getResult()));
+            }
+            return new StatClientQuery(idReader.getResult());
         }
 
         @NotNull
         @Override
-        public StatClientQuery getResult() {
-            if (result == null) {
-                if (typeReader.getResult() != Type.Stat.getId()) {
-                    throw new InvalidProcessorStateException(
-                            String.format("Expected stat type, but got %s", typeReader.getResult()));
-                }
-                result = new StatClientQuery(idReader.getResult());
-            }
-            return result;
+        protected ObjectReader<?> getReader() {
+            return seqReader;
         }
     }
 }

@@ -3,7 +3,7 @@ package homework.torrent.model.writer;
 import java.nio.ByteBuffer;
 
 /**
- * ObjectWriter for string.
+ * ObjectWriter for integer.
  */
 public class IntWriter extends AbstractObjectWriter {
     /**

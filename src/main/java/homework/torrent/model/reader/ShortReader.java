@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import java.nio.ByteBuffer;
 
 /**
- * Created by Dmitriy Baidin.
+ * ObjectReader of short.
  */
 public class ShortReader extends AbstractObjectReader<Short> {
     public ShortReader() {
