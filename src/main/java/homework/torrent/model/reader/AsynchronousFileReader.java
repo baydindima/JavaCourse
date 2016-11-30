@@ -1,5 +1,6 @@
 package homework.torrent.model.reader;
 
+import homework.torrent.model.ProgressListener;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +31,31 @@ public class AsynchronousFileReader {
     private final int length;
     @NotNull
     private final CompletionHandler<Void, Void> completionHandler;
+
+    @NotNull
+    private final ProgressListener progressListener;
+    @NotNull
+    private final CompletionHandler<Integer, Attachment> afterSocketRead = new CompletionHandler<Integer, Attachment>() {
+        @Override
+        public void completed(Integer result, Attachment attachment) {
+            log.debug("Socket reading with result: {}", result);
+            if (result != -1) {
+                attachment.buffer.flip();
+                attachment.fileChannel.write(attachment.buffer, attachment.position, attachment, afterFileWrite);
+            } else {
+                log.error("Can not read from socket!");
+                closeChannel(socketChannel);
+                closeChannel(attachment.fileChannel);
+            }
+        }
+
+        @Override
+        public void failed(Throwable exc, Attachment attachment) {
+            log.error("Error while reading socket!", exc);
+            closeChannel(socketChannel);
+            closeChannel(attachment.fileChannel);
+        }
+    };
     @NotNull
     private final CompletionHandler<Integer, Attachment> afterFileWrite = new CompletionHandler<Integer, Attachment>() {
 
@@ -38,6 +64,7 @@ public class AsynchronousFileReader {
             log.debug("Writing to file with result: {}", result);
             if (result != -1) {
                 attachment.position += result;
+                progressListener.load(result);
                 if (attachment.position < attachment.lastPosition) {
                     attachment.buffer.clear();
                     if (attachment.lastPosition - attachment.position < attachment.buffer.capacity()) {
@@ -61,28 +88,6 @@ public class AsynchronousFileReader {
         @Override
         public void failed(Throwable exc, Attachment attachment) {
             log.error("Error while writing to file!", exc);
-            closeChannel(socketChannel);
-            closeChannel(attachment.fileChannel);
-        }
-    };
-    @NotNull
-    private final CompletionHandler<Integer, Attachment> afterSocketRead = new CompletionHandler<Integer, Attachment>() {
-        @Override
-        public void completed(Integer result, Attachment attachment) {
-            log.debug("Socket reading with result: {}", result);
-            if (result != -1) {
-                attachment.buffer.flip();
-                attachment.fileChannel.write(attachment.buffer, attachment.position, attachment, afterFileWrite);
-            } else {
-                log.error("Can not read from socket!");
-                closeChannel(socketChannel);
-                closeChannel(attachment.fileChannel);
-            }
-        }
-
-        @Override
-        public void failed(Throwable exc, Attachment attachment) {
-            log.error("Error while reading socket!", exc);
             closeChannel(socketChannel);
             closeChannel(attachment.fileChannel);
         }

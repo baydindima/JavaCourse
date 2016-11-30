@@ -128,10 +128,9 @@ public class TorrentClientImpl implements TorrentClient {
         );
     }
 
-    @NotNull
     @Override
-    public Future<Void> downloadFile(@NotNull Path destinationPath,
-                                     @NotNull FileInfo fileInfo)
+    public ProgressListener downloadFile(@NotNull Path destinationPath,
+                                         @NotNull FileInfo fileInfo)
             throws IOException, FileAlreadyContainsInStorage {
         if (storage.contains(fileInfo.getId())) {
             throw new FileAlreadyContainsInStorage();
@@ -142,12 +141,14 @@ public class TorrentClientImpl implements TorrentClient {
             randomAccessFile.setLength(fileInfo.getSize());
         }
 
+        ProgressListener progressListener = new ProgressListener(fileInfo.getSize());
+
         storage.addNotLoadedFile(destinationPath, fileInfo);
 
         CompletableFuture<SourcesServerResponse> future =
                 getSourcesFuture(fileInfo.getId());
 
-        return future.thenCompose(sourcesServerResponse -> {
+        future.thenCompose(sourcesServerResponse -> {
             List<CompletableFuture<StatResponseWithClientInfo>> futures =
                     sourcesServerResponse.getClients().parallelStream()
                             .map(clientInfo -> getStatRequest(clientInfo, fileInfo.getId()))
@@ -155,17 +156,21 @@ public class TorrentClientImpl implements TorrentClient {
 
             return getPartToClientMap(futures).thenCompose(map -> {
                 List<CompletableFuture<Void>> collect = map.entrySet().stream().map(entry ->
-                        loadPart(entry.getValue(), fileInfo.getId(), entry.getKey())
+                        loadPart(entry.getValue(), progressListener, fileInfo.getId(), entry.getKey())
                 ).collect(Collectors.toList());
 
                 return CompletableFuture.allOf(collect.toArray(new CompletableFuture[collect.size()]));
             });
         });
+
+        return progressListener;
     }
 
     private CompletableFuture<Void> loadPart(
             @NotNull
             final List<ClientInfo> clients,
+            @NotNull
+            final ProgressListener progressListener,
             final long fileId,
             final int partId) {
 
@@ -188,6 +193,7 @@ public class TorrentClientImpl implements TorrentClient {
                                             .length(part.getLength())
                                             .offset(part.getOffset())
                                             .filePath(part.getFilePath())
+                                            .progressListener(progressListener)
                                             .socketChannel(requestAttachment
                                                     .getSocketChannel())
                                             .completionHandler(

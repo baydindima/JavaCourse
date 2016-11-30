@@ -3,6 +3,7 @@ package homework.torrent.app;
 
 import homework.torrent.exception.FileAlreadyContainsInStorage;
 import homework.torrent.model.FileInfo;
+import homework.torrent.model.ProgressListener;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -41,7 +42,6 @@ public interface TorrentClient {
      * @return future of loading
      * @throws IOException if IOException occurs
      */
-    @NotNull
-    Future<Void> downloadFile(@NotNull final Path destinationPath, @NotNull final FileInfo fileInfo) throws IOException, FileAlreadyContainsInStorage;
+    ProgressListener downloadFile(@NotNull final Path destinationPath, @NotNull final FileInfo fileInfo) throws IOException, FileAlreadyContainsInStorage;
 
 }

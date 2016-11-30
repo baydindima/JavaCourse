@@ -63,6 +63,7 @@ public class ClientMain {
             log.error("Exception during load storage from disk.", e);
             System.exit(1);
         }
+
         ClientScheduledUpdater clientScheduledUpdater = new ClientScheduledUpdater(
                 storage,
                 serverAddress,
@@ -170,7 +171,7 @@ public class ClientMain {
                 Optional<FileInfo> info = fileInfos.stream()
                         .filter(fileInfo -> fileInfo.getId() == fileId).findFirst();
                 if (info.isPresent()) {
-                    torrentClient.downloadFile(Paths.get(path), info.get()).get();
+                    torrentClient.downloadFile(Paths.get(path), info.get());
                 } else {
                     log.error("No such available file.");
                 }

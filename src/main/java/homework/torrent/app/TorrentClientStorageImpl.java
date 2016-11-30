@@ -360,7 +360,7 @@ public class TorrentClientStorageImpl
      * This class stores info about partly available file and path on disk.
      */
     @Data
-    private final static class IncompleteFileInfo {
+    private final static class IncompleteFileInfo implements Serializable {
         /**
          * Meta info about file
          */
